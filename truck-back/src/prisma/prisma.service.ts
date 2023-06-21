@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   ConflictException,
-  HttpCode,
   INestApplication,
   Injectable,
   OnModuleInit,
@@ -15,7 +14,6 @@ import { CreateProfileDto } from 'src/profile/Validation/create-profile.dto';
 import { UpdateProfileDto } from 'src/profile/Validation/update-profile.dto';
 import { CreatePromotionDto } from 'src/promotion/Validation/create-promotion.dto';
 import { UpdatePromotionDto } from 'src/promotion/Validation/update-promotion.dto';
-import { ConnectModelDto } from 'src/truck/Validation/connect-model.dto';
 import { CreateTruckDto } from 'src/truck/Validation/create-truck.dto';
 import { UpdateTruckDto } from 'src/truck/Validation/update-truck.dto';
 import { CreateUserDto } from 'src/user/Validation/create-user.dto';
@@ -178,33 +176,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     });
   }
 
-  connectModel(id: string, data: ConnectModelDto) {
-    return this.truck.update({
-      data: {
-        Model: {
-          connect: { id: data.model },
-        },
-      },
-      where: {
-        id,
-      },
-    });
-  }
-
-  disconnectModel(id: string, data: ConnectModelDto) {
-    HttpCode(301);
-    return this.truck.update({
-      data: {
-        Model: {
-          disconnect: { id: data.model },
-        },
-      },
-      where: {
-        id,
-      },
-    });
-  }
-
   findAllTrucks() {
     return this.truck.findMany({
       select: {
@@ -213,19 +184,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         image: true,
         pound: true,
         userId: false,
-        Model: {
-          select: {
-            id: true,
-            image: true,
-            Capacity: {
-              select: {
-                id: true,
-                capacity: true,
-                engine: true,
-              },
-            },
-          },
-        },
       },
     });
   }
@@ -234,14 +192,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     return this.truck.findUnique({
       where: {
         id,
-      },
-      select: {
-        Model: {
-          select: {
-            id: true,
-            Capacity: true,
-          },
-        },
       },
     });
   }

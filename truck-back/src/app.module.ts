@@ -7,13 +7,10 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { PromotionModule } from './promotion/promotion.module';
 import { BrandsModule } from './brands/brands.module';
-import { ModelModule } from './model/model.module';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaService } from './prisma/prisma.service';
-import { CreateProfileDto } from './profile/Validation/create-profile.dto';
 import { CreateUserDto } from './user/Validation/create-user.dto';
 import { Role } from './decorators';
-import { CapacityModule } from './capacity/capacity.module';
 
 @Module({
   imports: [
@@ -25,9 +22,7 @@ import { CapacityModule } from './capacity/capacity.module';
     PrismaModule,
     PromotionModule,
     BrandsModule,
-    ModelModule,
     ConfigModule.forRoot(),
-    CapacityModule,
   ],
   controllers: [],
   providers: [],
