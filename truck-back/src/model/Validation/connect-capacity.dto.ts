@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class ConnectModelDto {
+export class ConnectCapacityDto {
   @IsString()
-  model: string;
+  capacity: string;
 }

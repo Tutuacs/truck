@@ -1,9 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './Validation/create-user.dto';
 import { UpdateUserDto } from './Validation/update-user.dto';
-import { ParamId } from 'src/decorators';
+import { Acess, ParamId, Role } from 'src/decorators';
+import { AuthGuard, RoleGuard } from 'src/guards';
+import { UserAuth } from 'src/decorators/UserAtuh.decorator';
 
+@UseGuards(AuthGuard, RoleGuard)
+@Acess(Role.Admin)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -14,7 +18,7 @@ export class UserController {
   }
 
   @Get()
-  findAll() {
+  findAll(@UserAuth('role') role: number) {
     return this.userService.findAll();
   }
 

@@ -11,12 +11,19 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaService } from './prisma/prisma.service';
 import { CreateUserDto } from './user/Validation/create-user.dto';
 import { Role } from './decorators';
+import { ModelModule } from './model/model.module';
+import { CapacityModule } from './capacity/capacity.module';
+import { UsertruckModule } from './usertruck/usertruck.module';
+import * as bcrypt from "bcrypt";
 
 @Module({
   imports: [
     UserModule,
     ProfileModule,
+    UsertruckModule,
     TruckModule,
+    ModelModule,
+    CapacityModule,
     ProductModule,
     AuthModule,
     PrismaModule,
@@ -35,10 +42,12 @@ export class AppModule implements OnModuleInit {
     if (!exist) {
       const adminU = new CreateUserDto();
       const userId = await this.prisma.createUser(adminU);
-      const adminId = await this.prisma.profile.create({
+      const salt = await bcrypt.genSalt();
+      const password = await bcrypt.hash('123', salt);
+      await this.prisma.profile.create({
         data: {
           email: 'admin@admin.com',
-          password: '123',
+          password: password,
           role: Role.Admin,
           User: {
             connect: { id: userId.id },

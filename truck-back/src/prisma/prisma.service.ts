@@ -1,13 +1,20 @@
 import {
   BadRequestException,
   ConflictException,
+  HttpCode,
   INestApplication,
   Injectable,
   OnModuleInit,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import { LoginDto } from 'src/auth/Validation/login.dto';
 import { CreateBrandDto } from 'src/brands/Validation/create-brand.dto';
 import { UpdateBrandDto } from 'src/brands/Validation/update-brand.dto';
+import { CreateCapacityDto } from 'src/capacity/Validation/create-capacity.dto';
+import { UpdateCapacityDto } from 'src/capacity/Validation/update-capacity.dto';
+import { CreateModelDto } from 'src/model/Validation/create-model.dto';
+import { UpdateModelDto } from 'src/model/Validation/update-model.dto';
 import { CreateProductDto } from 'src/product/Validation/create-product.dto';
 import { UpdateProductDto } from 'src/product/Validation/update-product.dto';
 import { CreateProfileDto } from 'src/profile/Validation/create-profile.dto';
@@ -18,6 +25,8 @@ import { CreateTruckDto } from 'src/truck/Validation/create-truck.dto';
 import { UpdateTruckDto } from 'src/truck/Validation/update-truck.dto';
 import { CreateUserDto } from 'src/user/Validation/create-user.dto';
 import { UpdateUserDto } from 'src/user/Validation/update-user.dto';
+import { ConnectUsertruckDto } from 'src/usertruck/Validation/create-usertruck.dto';
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
@@ -102,6 +111,27 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     }
   }
 
+  async findLogin(login: LoginDto) {
+    const user = await this.profile.findUnique({
+      where: {
+        email: login.email,
+      },
+    });
+    if (user) {
+      if (!(await bcrypt.compare(login.password, user.password))) {
+        throw new UnauthorizedException('Usuário ou senha incorretos');
+      }
+    } else {
+      throw new UnauthorizedException('Usuário ou senha incorretos');
+    }
+    return {
+      id: user.id,
+      email: user.email,
+      userId: user.userId,
+      role: user.role,
+    };
+  }
+
   async existProfileEmail(id: string, email: string) {
     const user = await this.profile.findFirst({
       where: {
@@ -113,7 +143,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     }
   }
 
-  createProfile(data: CreateProfileDto) {
+  async createProfile(data: CreateProfileDto) {
+    const salt = await bcrypt.genSalt();
+    data.password = await bcrypt.hash(data.password, salt);
     return this.profile.create({
       data,
     });
@@ -140,8 +172,332 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     });
   }
 
-  removeProfile(id: string) {
-    return this.profile.delete({
+  async removeProfile(id: string) {
+    const user = await this.profile.delete({
+      where: {
+        id,
+      },
+      select: {
+        User:{
+          select:{
+            id:true,
+          }
+        }
+      }
+    });
+
+    return this.removeUser(user.User.id);
+
+  }
+
+    //=============================================================================================//
+  // #Capacity
+
+  async existUserTruckId(id: string) {
+    if (id.length < 24 || id.length > 24) {
+      throw new BadRequestException(
+        'A capacidade com o id solicitado não existe',
+      );
+    }
+    if (
+      !(await this.capacity.count({
+        where: {
+          id,
+        },
+      }))
+    ) {
+      throw new BadRequestException(
+        'a capacidade com o id solicitado não existe',
+      );
+    }
+  }
+
+  createUserTruck(data: CreateCapacityDto) {
+    return this.capacity.create({
+      data,
+    });
+  }
+
+  async connectUserTruck(id: string, data: ConnectUsertruckDto) {
+    const userTruck = await this.userTruck.findFirst({
+      where:{
+        truckId:{
+          equals: data.Truck
+        },
+        modelId: {
+          equals: data.Model
+        },
+        capacityId: {
+          equals: data.Capacity
+        },
+      },
+      select:{
+        id:true,
+      }
+    });
+
+    if(!userTruck){
+      const idd = await this.userTruck.create({
+        data:{
+          capacityId: data.Capacity,
+          modelId: data.Model,
+          truckId: data.Truck,
+        },
+        select:{
+          id:true,
+        }
+      });
+
+      return this.user.update({
+        data: {
+          userTrucks: {
+            connect: {id: idd.id}
+          },
+        },
+        where: {
+          id,
+        },
+      });
+    }
+
+    return this.model.update({
+      data: {
+        Capacity: {
+          connect: { id: userTruck.id },
+        },
+      },
+      where: {
+        id,
+      },
+    });
+  }
+
+  async disconnectUserTruck(id: string, data: ConnectUsertruckDto) {
+    HttpCode(301);
+    const userTruck = await this.userTruck.findFirst({
+      where:{
+        truckId:{
+          equals: data.Truck
+        },
+        modelId: {
+          equals: data.Model
+        },
+        capacityId: {
+          equals: data.Capacity
+        },
+      },
+      select:{
+        id:true,
+      }
+    });
+
+    if(!userTruck){
+      throw new ConflictException("O caminhão não foi encontrado");
+    }
+
+    // return this.user.update({
+    //   data: {
+    //     UserTruck: {
+    //       disconnect: { id: userTruck.id },
+    //     },
+    //   },
+    //   where: {
+    //     id,
+    //   },
+    // });
+  }
+
+  findAllUserTrucks() {
+    return this.capacity.findMany({
+      select: {
+        id: true,
+        capacity: true,
+        engine: true,
+        modelId: false,
+      },
+    });
+  }
+
+  findUniqUserTruck(id: string) {
+    return this.model.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
+  updateUserTruck(id: string, data: UpdateCapacityDto) {
+    return this.capacity.update({
+      data,
+      where: {
+        id,
+      },
+    });
+  }
+
+  removeUserTruck(id: string) {
+    return this.capacity.delete({
+      where: {
+        id,
+      },
+    });
+  }
+
+  //=============================================================================================//
+  // #Capacity
+
+  async existCapacityId(id: string) {
+    if (id.length < 24 || id.length > 24) {
+      throw new BadRequestException(
+        'A capacidade com o id solicitado não existe',
+      );
+    }
+    if (
+      !(await this.capacity.count({
+        where: {
+          id,
+        },
+      }))
+    ) {
+      throw new BadRequestException(
+        'a capacidade com o id solicitado não existe',
+      );
+    }
+  }
+
+  createCapacity(data: CreateCapacityDto) {
+    return this.capacity.create({
+      data,
+    });
+  }
+
+  findAllCapacitys() {
+    return this.capacity.findMany({
+      select: {
+        id: true,
+        capacity: true,
+        engine: true,
+        modelId: false,
+      },
+    });
+  }
+
+  findUniqCapacity(id: string) {
+    return this.model.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
+  updateCapacity(id: string, data: UpdateCapacityDto) {
+    return this.capacity.update({
+      data,
+      where: {
+        id,
+      },
+    });
+  }
+
+  removeCapacity(id: string) {
+    return this.capacity.delete({
+      where: {
+        id,
+      },
+    });
+  }
+
+  //=============================================================================================//
+  // #Model
+
+  async existModelId(id: string) {
+    if (id.length < 24 || id.length > 24) {
+      throw new BadRequestException('O modelo com o id solicitado não existe');
+    }
+    if (
+      !(await this.model.count({
+        where: {
+          id,
+        },
+      }))
+    ) {
+      throw new BadRequestException('O modelo com o id solicitado não existe');
+    }
+  }
+
+  createModel(data: CreateModelDto) {
+    return this.model.create({
+      data,
+    });
+  }
+
+  connectCapacity(id: string, idd: string) {
+    HttpCode(202);
+    return this.model.update({
+      data: {
+        Capacity: {
+          connect: { id: idd },
+        },
+      },
+      where: {
+        id,
+      },
+    });
+  }
+
+  disconnectCapacity(id: string, idd: string) {
+    HttpCode(301);
+    return this.model.update({
+      data: {
+        Capacity: {
+          disconnect: { id: idd },
+        },
+      },
+      where: {
+        id,
+      },
+    });
+  }
+
+  findAllModels() {
+    return this.model.findMany({
+      select: {
+        id: true,
+        image: true,
+        year: true,
+        Capacity: {
+          select: {
+            id: true,
+            capacity: true,
+            engine: true,
+            modelId: false,
+            Model: false,
+          },
+        },
+        capacityId: false,
+      },
+    });
+  }
+
+  findUniqModel(id: string) {
+    return this.model.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
+  updateModel(id: string, data: UpdateModelDto) {
+    return this.model.update({
+      data,
+      where: {
+        id,
+      },
+    });
+  }
+
+  removeModel(id: string) {
+    return this.model.delete({
       where: {
         id,
       },
@@ -176,6 +532,32 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     });
   }
 
+  connectModel(id: string, idd: string) {
+    return this.truck.update({
+      data: {
+        Model: {
+          connect: { id: idd },
+        },
+      },
+      where: {
+        id,
+      },
+    });
+  }
+
+  disconnectModel(id: string, idd: string) {
+    return this.truck.update({
+      data: {
+        Model: {
+          disconnect: { id: idd },
+        },
+      },
+      where: {
+        id,
+      },
+    });
+  }
+
   findAllTrucks() {
     return this.truck.findMany({
       select: {
@@ -183,7 +565,19 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         brand: true,
         image: true,
         pound: true,
-        userId: false,
+        Model: {
+          select: {
+            id: true,
+            image: true,
+            Capacity: {
+              select: {
+                id: true,
+                capacity: true,
+                engine: true,
+              },
+            },
+          },
+        },
       },
     });
   }
@@ -192,6 +586,19 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     return this.truck.findUnique({
       where: {
         id,
+      },
+      select: {
+        id: true,
+        brand: true,
+        image: true,
+        Model: {
+          select: {
+            id: true,
+            year: true,
+            image: true,
+            Capacity: true,
+          },
+        },
       },
     });
   }

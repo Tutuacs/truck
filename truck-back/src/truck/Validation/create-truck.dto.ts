@@ -15,18 +15,4 @@ export class CreateTruckDto {
   @IsString()
   image: string;
 
-  @IsString()
-  year:string;
-
-  @IsOptional()
-  @IsString()
-  modelImage: string;
-
-  @IsString()
-  capacity: string;
-
-  @IsOptional()
-  @IsString()
-  engine: string;
-
 }

@@ -15,8 +15,8 @@ export class AuthService {
   ) {}
 
   async login(login: LoginDto) {
-    // const user = await this.prisma.findLogin(login);
-    // return this.createToken(user);
+    const user = await this.prisma.findLogin(login);
+    return this.createToken(user);
   }
 
   async register(register: LoginDto) {
@@ -34,17 +34,15 @@ export class AuthService {
 
   async createToken(profile: {
     id: string;
-    name: string;
+    role: number;
     email: string;
-    CNPJ: string;
     userId: string;
-    acess: number;
   }) {
     return {
       token: this.jwt.sign(
         {
           id: profile.id,
-          acess: profile.acess,
+          role: profile.role,
           userId: profile.userId,
         },
         {

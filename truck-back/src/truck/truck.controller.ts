@@ -10,7 +10,6 @@ import {
 import { TruckService } from './truck.service';
 import { CreateTruckDto } from './Validation/create-truck.dto';
 import { UpdateTruckDto } from './Validation/update-truck.dto';
-import { ConnectModelDto } from './Validation/connect-model.dto';
 
 @Controller('truck')
 export class TruckController {
@@ -19,6 +18,11 @@ export class TruckController {
   @Post()
   create(@Body() data: CreateTruckDto) {
     return this.truckService.create(data);
+  }
+
+  @Post(':connect/:id/:idd')
+  connect(@Param('connect') connect: string, @Param('id') id: string, @Param('idd') idd: string) {
+    return this.truckService.connect(id,idd,connect);
   }
 
   @Get(':id')
