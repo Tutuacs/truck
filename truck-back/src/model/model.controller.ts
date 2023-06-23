@@ -10,7 +10,6 @@ import {
 import { ModelService } from './model.service';
 import { CreateModelDto } from './Validation/create-model.dto';
 import { UpdateModelDto } from './Validation/update-model.dto';
-import { ConnectCapacityDto } from './Validation/connect-capacity.dto';
 
 @Controller('model')
 export class ModelController {

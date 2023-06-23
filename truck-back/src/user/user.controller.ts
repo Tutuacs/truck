@@ -4,10 +4,8 @@ import { CreateUserDto } from './Validation/create-user.dto';
 import { UpdateUserDto } from './Validation/update-user.dto';
 import { Acess, ParamId, Role } from 'src/decorators';
 import { AuthGuard, RoleGuard } from 'src/guards';
-import { UserAuth } from 'src/decorators/UserAtuh.decorator';
 
 @UseGuards(AuthGuard, RoleGuard)
-@Acess(Role.Admin)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -17,8 +15,9 @@ export class UserController {
     return this.userService.create(data);
   }
 
+  @Acess(Role.Admin)
   @Get()
-  findAll(@UserAuth('role') role: number) {
+  findAll() {
     return this.userService.findAll();
   }
 
