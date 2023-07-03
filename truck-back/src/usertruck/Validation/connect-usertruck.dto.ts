@@ -1,6 +1,9 @@
 import { IsOptional, IsString } from "class-validator";
 
-export class CreatetUsertruckDto {
+export class ConnectUsertruckDto {
+
+    // @IsString()
+    // User: string;
 
     @IsString()
     truckId: string;

@@ -14,6 +14,7 @@ import { Role } from './decorators';
 import { ModelModule } from './model/model.module';
 import { CapacityModule } from './capacity/capacity.module';
 import { UsertruckModule } from './usertruck/usertruck.module';
+import { PromotionitemModule } from './promotionitem/promotionitem.module';
 import * as bcrypt from "bcrypt";
 
 @Module({
@@ -30,6 +31,7 @@ import * as bcrypt from "bcrypt";
     PromotionModule,
     BrandsModule,
     ConfigModule.forRoot(),
+    PromotionitemModule,
   ],
   controllers: [],
   providers: [],

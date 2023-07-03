@@ -4,6 +4,7 @@ import {
   HttpCode,
   INestApplication,
   Injectable,
+  NotFoundException,
   OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -25,8 +26,12 @@ import { CreateTruckDto } from 'src/truck/Validation/create-truck.dto';
 import { UpdateTruckDto } from 'src/truck/Validation/update-truck.dto';
 import { CreateUserDto } from 'src/user/Validation/create-user.dto';
 import { UpdateUserDto } from 'src/user/Validation/update-user.dto';
-import { ConnectUsertruckDto } from 'src/usertruck/Validation/create-usertruck.dto';
-import * as bcrypt from "bcrypt";
+import { ConnectUsertruckDto } from 'src/usertruck/Validation/connect-usertruck.dto';
+import * as bcrypt from 'bcrypt';
+import { UpdateUsertruckDto } from 'src/usertruck/Validation/update-usertruck.dto';
+import { CreatetUsertruckDto } from 'src/usertruck/Validation/create-usertruck.dto';
+import { CreatePromotionitemDto } from 'src/promotionitem/Validation/create-promotionitem.dto';
+import { UpdatePromotionitemDto } from 'src/promotionitem/Validation/update-promotionitem.dto';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
@@ -178,80 +183,85 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         id,
       },
       select: {
-        User:{
-          select:{
-            id:true,
-          }
-        }
-      }
+        User: {
+          select: {
+            id: true,
+          },
+        },
+      },
     });
 
     return this.removeUser(user.User.id);
-
   }
 
-    //=============================================================================================//
-  // #Capacity
+  //=============================================================================================//
+  // #UserTruck
 
   async existUserTruckId(id: string) {
     if (id.length < 24 || id.length > 24) {
       throw new BadRequestException(
-        'A capacidade com o id solicitado não existe',
+        'O caminhão com o id solicitado não existe',
       );
     }
     if (
-      !(await this.capacity.count({
+      !(await this.userTruck.count({
         where: {
           id,
         },
       }))
     ) {
       throw new BadRequestException(
-        'a capacidade com o id solicitado não existe',
+        'O caminhão com o id solicitado não existe',
       );
     }
   }
 
-  createUserTruck(data: CreateCapacityDto) {
-    return this.capacity.create({
+  createUserTruck(data: CreatetUsertruckDto) {
+    return this.userTruck.create({
       data,
     });
   }
 
   async connectUserTruck(id: string, data: ConnectUsertruckDto) {
+    const where = {
+      truckId: data.truckId ? data.truckId : undefined,
+      modelId: data.modelId ? data.modelId : undefined,
+      capacityId: data.capacityId ? data.capacityId : undefined,
+    };
+
     const userTruck = await this.userTruck.findFirst({
-      where:{
+      where: {
         truckId:{
-          equals: data.Truck
+          equals: where.truckId,
         },
-        modelId: {
-          equals: data.Model
+        modelId:{
+          equals: where.modelId,
         },
-        capacityId: {
-          equals: data.Capacity
-        },
+        capacityId:{
+          equals: where.capacityId,
+        }
       },
-      select:{
-        id:true,
-      }
+      select: {
+        id: true,
+      },
     });
 
-    if(!userTruck){
+    if (!userTruck) {
       const idd = await this.userTruck.create({
-        data:{
-          capacityId: data.Capacity,
-          modelId: data.Model,
-          truckId: data.Truck,
+        data: {
+          truckId: data.truckId,
+          modelId: where.modelId,
+          capacityId: where.capacityId,
         },
-        select:{
-          id:true,
-        }
+        select: {
+          id: true,
+        },
       });
 
       return this.user.update({
         data: {
           userTrucks: {
-            connect: {id: idd.id}
+            connect: { id: idd.id },
           },
         },
         where: {
@@ -260,9 +270,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       });
     }
 
-    return this.model.update({
+    return this.user.update({
       data: {
-        Capacity: {
+        userTrucks: {
           connect: { id: userTruck.id },
         },
       },
@@ -273,61 +283,63 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   }
 
   async disconnectUserTruck(id: string, data: ConnectUsertruckDto) {
-    HttpCode(301);
+    const where = {
+      truckId: data.truckId ? data.truckId : undefined,
+      modelId: data.modelId ? data.modelId : undefined,
+      capacityId: data.capacityId ? data.capacityId : undefined,
+    };
+
     const userTruck = await this.userTruck.findFirst({
-      where:{
+      where: {
         truckId:{
-          equals: data.Truck
+          equals: where.truckId,
         },
-        modelId: {
-          equals: data.Model
+        modelId:{
+          equals: where.modelId,
         },
-        capacityId: {
-          equals: data.Capacity
-        },
+        capacityId:{
+          equals: where.capacityId,
+        }
       },
-      select:{
-        id:true,
-      }
-    });
-
-    if(!userTruck){
-      throw new ConflictException("O caminhão não foi encontrado");
-    }
-
-    // return this.user.update({
-    //   data: {
-    //     UserTruck: {
-    //       disconnect: { id: userTruck.id },
-    //     },
-    //   },
-    //   where: {
-    //     id,
-    //   },
-    // });
-  }
-
-  findAllUserTrucks() {
-    return this.capacity.findMany({
       select: {
         id: true,
-        capacity: true,
-        engine: true,
-        modelId: false,
       },
     });
-  }
 
-  findUniqUserTruck(id: string) {
-    return this.model.findUnique({
+    if (!userTruck) {
+      throw new NotFoundException('O caminhão não foi encontrado');
+    }
+
+    return this.user.update({
+      data: {
+        userTrucks: {
+          disconnect: { id: userTruck.id },
+        },
+      },
       where: {
         id,
       },
     });
   }
 
-  updateUserTruck(id: string, data: UpdateCapacityDto) {
-    return this.capacity.update({
+  findAllUserTrucks() {
+    return this.userTruck.findMany({
+      select: {
+        id: true,
+      },
+    });
+  }
+
+  findUniqUserTruck(id: string) {
+    return this.userTruck.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
+  updateUserTruck(id: string, data: UpdateUsertruckDto) {
+    return this.userTruck.update({
       data,
       where: {
         id,
@@ -694,6 +706,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   createProduct(data: CreateProductDto) {
     return this.product.create({
       data,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        price: true,
+      },
     });
   }
 
@@ -725,6 +743,74 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       },
     });
   }
+
+  connectTP(idd: string, id: string) {
+    return this.product.update({
+      data: {
+        UserTruck: {
+          connect: { id: idd },
+        },
+      },
+      where: {
+        id,
+      },
+    });
+  }
+
+
+    //=============================================================================================//
+  // #Promotion Item
+
+  async existPromotionItemId(id: string) {
+    if (id.length < 24 || id.length > 24) {
+      throw new BadRequestException('O produto com o id solicitado não existe');
+    }
+    if (
+      !(await this.promotion_Item.count({
+        where: {
+          id,
+        },
+      }))
+    ) {
+      throw new BadRequestException('O produto com o id solicitado não existe');
+    }
+  }
+
+  createPromotionItem(data: CreatePromotionitemDto) {
+    return this.promotion_Item.create({
+      data,
+    });
+  }
+
+  findAllPromotionItems() {
+    return this.promotion_Item.findMany();
+  }
+
+  findUniqPromotionItem(id: string) {
+    return this.promotion_Item.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
+  updatePromotionItem(id: string, data: UpdatePromotionitemDto) {
+    return this.promotion_Item.update({
+      data,
+      where: {
+        id,
+      },
+    });
+  }
+
+  removePromotionItem(id: string) {
+    return this.promotion_Item.delete({
+      where: {
+        id,
+      },
+    });
+  }
+
 
   //=============================================================================================//
   // #Promotion
