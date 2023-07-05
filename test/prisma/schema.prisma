@@ -21,6 +21,7 @@ model User {
   verifiedEmail Boolean     @default(false)
   userTrucksId  String[]    @db.ObjectId
   userTrucks    UserTruck[] @relation(fields: [userTrucksId], references: [id])
+  Cart          Cart?
 }
 
 model Profile {
@@ -31,6 +32,27 @@ model Profile {
   image    String?
   User     User?   @relation(fields: [userId], references: [id])
   userId   String  @unique @db.ObjectId
+}
+
+model Cart {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  Combos      Combo[]     @relation(fields: [combosId], references: [id])
+  combosId    String[]    @db.ObjectId
+  Promotion   Promotion[] @relation(fields: [promotionId], references: [id])
+  promotionId String[]    @db.ObjectId
+  Product     Product[]   @relation(fields: [productId], references: [id])
+  productId   String[]    @db.ObjectId
+  User        User        @relation(fields: [userId], references: [id])
+  userId      String      @unique @db.ObjectId
+  Shop        Shop?
+}
+
+model Shop {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  Product   Product[] @relation(fields: [productId], references: [id])
+  productId String[]  @db.ObjectId
+  Cart      Cart?     @relation(fields: [cartId], references: [id])
+  cartId    String?   @unique @db.ObjectId
 }
 
 model Truck {
@@ -87,6 +109,10 @@ model Product {
   UserTruck   UserTruck[] @relation(fields: [userTruckId], references: [id])
   userTruckId String[]    @db.ObjectId
   Item        Item[]
+  Cart        Cart[]      @relation(fields: [cartId], references: [id])
+  cartId      String[]    @db.ObjectId
+  Shop        Shop[]      @relation(fields: [shopId], references: [id])
+  shopId      String[]    @db.ObjectId
 }
 
 model Promotion {
@@ -95,6 +121,8 @@ model Promotion {
   dateTo   DateTime?
   itemId   String[]  @db.ObjectId
   Item     Item[]    @relation(fields: [itemId], references: [id])
+  Cart     Cart[]    @relation(fields: [cartId], references: [id])
+  cartId   String[]  @db.ObjectId
 }
 
 model Item {
@@ -105,14 +133,16 @@ model Item {
   product     Product     @relation(fields: [productId], references: [id])
   Promotion   Promotion[] @relation(fields: [promotionId], references: [id])
   promotionId String[]    @db.ObjectId
-  Combo       Combo[]     @relation(fields: [comboId], references: [id])
-  comboId     String[]    @db.ObjectId
+  Combo       Combo?      @relation(fields: [comboId], references: [id])
+  comboId     String?     @db.ObjectId
 }
 
 model Combo {
   id     String   @id @default(auto()) @map("_id") @db.ObjectId
-  Item   Item[]   @relation(fields: [itemId], references: [id])
+  Item   Item[]
   itemId String[] @db.ObjectId
+  Cart   Cart[]   @relation(fields: [cartId], references: [id])
+  cartId String[] @db.ObjectId
 }
 
 model Brands {
