@@ -11,16 +11,16 @@ datasource db {
 }
 
 model User {
-  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
   name          String?
   email         String?
   cpf           String?
   profile       Profile?
-  company       Boolean     @default(false)
+  company       Boolean  @default(false)
   cnpj          String?
-  verifiedEmail Boolean     @default(false)
-  userTrucksId  String[]    @db.ObjectId
-  userTrucks    UserTruck[] @relation(fields: [userTrucksId], references: [id])
+  verifiedEmail Boolean  @default(false)
+  trucksId      String[] @db.ObjectId
+  Trucks        Truck[]  @relation(fields: [trucksId], references: [id])
   Cart          Cart?
 }
 
@@ -35,114 +35,71 @@ model Profile {
 }
 
 model Cart {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
-  Combos      Combo[]     @relation(fields: [combosId], references: [id])
-  combosId    String[]    @db.ObjectId
-  Promotion   Promotion[] @relation(fields: [promotionId], references: [id])
-  promotionId String[]    @db.ObjectId
-  Product     Product[]   @relation(fields: [productId], references: [id])
-  productId   String[]    @db.ObjectId
-  User        User        @relation(fields: [userId], references: [id])
-  userId      String      @unique @db.ObjectId
-  Shop        Shop?
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  Product   Product[] @relation(fields: [productId], references: [id])
+  productId String[]  @db.ObjectId
+  User      User?     @relation(fields: [userId], references: [id])
+  userId    String?   @unique @db.ObjectId
+  Shop      Shop?
+  Combo     Combo[]   @relation(fields: [comboId], references: [id])
+  comboId   String[]  @db.ObjectId
 }
 
 model Shop {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
   Product   Product[] @relation(fields: [productId], references: [id])
   productId String[]  @db.ObjectId
+  Combo     Combo[]   @relation(fields: [comboId], references: [id])
+  comboId   String[]  @db.ObjectId
   Cart      Cart?     @relation(fields: [cartId], references: [id])
   cartId    String?   @unique @db.ObjectId
 }
 
 model Truck {
-  id        String      @id @default(auto()) @map("_id") @db.ObjectId
-  image     String?
-  pound     Int         @default(1)
-  brand     String
-  Model     Model[]     @relation(fields: [modelId], references: [id])
-  modelId   String[]    @db.ObjectId
-  UserTruck UserTruck[]
-}
-
-model Model {
-  id         String      @id @default(auto()) @map("_id") @db.ObjectId
-  image      String?
-  year       String
-  Truck      Truck[]     @relation(fields: [truckId], references: [id])
-  truckId    String[]    @db.ObjectId
-  Capacity   Capacity[]  @relation(fields: [capacityId], references: [id])
-  capacityId String[]    @db.ObjectId
-  UserTruck  UserTruck[]
-}
-
-model Capacity {
-  id        String      @id @default(auto()) @map("_id") @db.ObjectId
-  capacity  String
-  engine    String?
-  Model     Model[]     @relation(fields: [modelId], references: [id])
-  modelId   String[]    @db.ObjectId
-  UserTruck UserTruck[]
-}
-
-model UserTruck {
   id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  Truck      Truck     @relation(fields: [truckId], references: [id])
-  truckId    String    @db.ObjectId
-  Model      Model?    @relation(fields: [modelId], references: [id])
-  modelId    String?   @db.ObjectId
-  Capacity   Capacity? @relation(fields: [capacityId], references: [id])
-  capacityId String?   @db.ObjectId
+  image      String?
+  pound      Int       @default(0)
+  brand      String
+  modelImage String?
+  year       String?
+  capacity   String?
+  engine     String?
   User       User[]    @relation(fields: [userId], references: [id])
   userId     String[]  @db.ObjectId
-  product    Product[] @relation(fields: [productId], references: [id])
+  Product    Product[] @relation(fields: [productId], references: [id])
   productId  String[]  @db.ObjectId
 }
 
 model Product {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  description String?
-  price       Float
-  Brands      Brands?     @relation(fields: [brandsId], references: [id])
-  brandsId    String?     @db.ObjectId
-  UserTruck   UserTruck[] @relation(fields: [userTruckId], references: [id])
-  userTruckId String[]    @db.ObjectId
-  Item        Item[]
-  Cart        Cart[]      @relation(fields: [cartId], references: [id])
-  cartId      String[]    @db.ObjectId
-  Shop        Shop[]      @relation(fields: [shopId], references: [id])
-  shopId      String[]    @db.ObjectId
-}
-
-model Promotion {
-  id       String    @id @default(auto()) @map("_id") @db.ObjectId
-  dateFrom DateTime?
-  dateTo   DateTime?
-  itemId   String[]  @db.ObjectId
-  Item     Item[]    @relation(fields: [itemId], references: [id])
-  Cart     Cart[]    @relation(fields: [cartId], references: [id])
-  cartId   String[]  @db.ObjectId
-}
-
-model Item {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
-  minQuantity Int?        @default(1)
-  price       Float
-  productId   String      @db.ObjectId
-  product     Product     @relation(fields: [productId], references: [id])
-  Promotion   Promotion[] @relation(fields: [promotionId], references: [id])
-  promotionId String[]    @db.ObjectId
-  Combo       Combo?      @relation(fields: [comboId], references: [id])
-  comboId     String?     @db.ObjectId
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  description    String?
+  price          Float
+  Brands         Brands?   @relation(fields: [brandsId], references: [id])
+  brandsId       String?   @db.ObjectId
+  Truck          Truck[]   @relation(fields: [truckId], references: [id])
+  truckId        String[]  @db.ObjectId
+  promotion      Boolean?  @default(false)
+  promotionFrom  DateTime?
+  promotionTo    DateTime?
+  promotionPrice Float?
+  minPromotion   Int?      @default(1)
+  comboId        String?   @db.ObjectId
+  minCombo       Int?      @default(1)
+  Combo          Combo?    @relation(fields: [comboId], references: [id])
+  Cart           Cart[]    @relation(fields: [cartId], references: [id])
+  cartId         String[]  @db.ObjectId
+  Shop           Shop[]    @relation(fields: [shopId], references: [id])
+  shopId         String[]  @db.ObjectId
 }
 
 model Combo {
-  id     String   @id @default(auto()) @map("_id") @db.ObjectId
-  Item   Item[]
-  itemId String[] @db.ObjectId
-  Cart   Cart[]   @relation(fields: [cartId], references: [id])
-  cartId String[] @db.ObjectId
+  id      String    @id @default(auto()) @map("_id") @db.ObjectId
+  Product Product[]
+  Cart    Cart[]    @relation(fields: [cartId], references: [id])
+  cartId  String[]  @db.ObjectId
+  Shop    Shop[]    @relation(fields: [shopId], references: [id])
+  shopId  String[]  @db.ObjectId
 }
 
 model Brands {

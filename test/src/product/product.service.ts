@@ -17,11 +17,11 @@ export class ProductService {
     console.log(idd)
     console.log(id)
     if (connect === 'connect') {
-      await this.prisma.existUserTruckId(idd);
+      await this.prisma.existTruckId(idd);
       await this.prisma.existProductId(id);
       return this.prisma.connectTP(idd,id);
     } else if (connect === 'disconnect') {
-      await this.prisma.existUserTruckId(idd);
+      await this.prisma.existTruckId(idd);
       await this.prisma.existProductId(id);
       return this.prisma.disconnectTP(idd,id);
     } else {

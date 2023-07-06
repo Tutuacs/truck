@@ -28,9 +28,5 @@ export class CartController {
   update(@Param('id') id: string, @Body() updateCartDto: UpdateCartDto) {
     return this.cartService.update(id, updateCartDto);
   }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cartService.remove(id);
-  }
+  
 }

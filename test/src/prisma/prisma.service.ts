@@ -1,10 +1,8 @@
 import {
   BadRequestException,
   ConflictException,
-  HttpCode,
   INestApplication,
   Injectable,
-  NotFoundException,
   OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -14,27 +12,19 @@ import { CreateBrandDto } from 'src/brands/Validation/create-brand.dto';
 import { UpdateBrandDto } from 'src/brands/Validation/update-brand.dto';
 import { CreateProductDto } from 'src/product/Validation/create-product.dto';
 import { UpdateProductDto } from 'src/product/Validation/update-product.dto';
-import { CreateCapacityDto } from 'src/capacity/Validation/create-capacity.dto';
-import { UpdateCapacityDto } from 'src/capacity/Validation/update-capacity.dto';
-import { CreateModelDto } from 'src/model/Validation/create-model.dto';
-import { UpdateModelDto } from 'src/model/Validation/update-model.dto';
 import { CreateTruckDto } from 'src/truck/Validation/create-truck.dto';
 import { UpdateTruckDto } from 'src/truck/Validation/update-truck.dto';
 import { CreateProfileDto } from 'src/profile/Validation/create-profile.dto';
 import { UpdateProfileDto } from 'src/profile/Validation/update-profile.dto';
-import { CreatePromotionDto } from 'src/promotion/Validation/create-promotion.dto';
-import { UpdatePromotionDto } from 'src/promotion/Validation/update-promotion.dto';
 import { CreateUserDto } from 'src/user/Validation/create-user.dto';
 import { UpdateUserDto } from 'src/user/Validation/update-user.dto';
-import { ConnectUsertruckDto } from 'src/usertruck/Validation/connect-usertruck.dto';
-import * as bcrypt from 'bcrypt';
-import { UpdateUsertruckDto } from 'src/usertruck/Validation/update-usertruck.dto';
-import { CreatetUsertruckDto } from 'src/usertruck/Validation/create-usertruck.dto';
-import { CreateItemDto } from 'src/item/Validation/create-item.dto';
-import { UpdateItemDto } from 'src/item/Validation/update-item.dto';
 import { CreateComboDto } from 'src/combo/Validation/create-combo.dto';
 import { UpdateComboDto } from 'src/combo/Validation/update-combo.dto';
 import { CreateCartDto } from 'src/cart/Validation/create-cart.dto';
+import { UpdateCartDto } from 'src/cart/Validation/update-cart.dto';
+import { CreateShopDto } from 'src/shop/Validation/create-shop.dto';
+import { UpdateShopDto } from 'src/shop/Validation/update-shop.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
@@ -64,6 +54,19 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     ) {
       throw new BadRequestException('O usuário com o id solicitado não existe');
     }
+  }
+
+  async register(data: CreateProfileDto) {
+    await this.existProfileEmail('1', data.email);
+    const user = await this.createUser(new CreateUserDto());
+    const cartDto = new CreateCartDto();
+    cartDto.userId = user.id;
+    const cart = await this.createCart(cartDto);
+    const shopDto = new CreateShopDto();
+    shopDto.cartId = cart.id;
+    const shop = await this.createShop(shopDto);
+    data.userId = user.id;
+    return this.createProfile(data);
   }
 
   createUser(data: CreateUserDto) {
@@ -101,17 +104,43 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     });
   }
 
-  connectUtoP(userId: string, profileId:string){
+  connectUtoP(userId: string, profileId: string) {
     return this.user.update({
-      where:{
+      where: {
         id: userId,
       },
-      data:{
-        profile:{
-          connect: {id: profileId}
-        }
+      data: {
+        profile: {
+          connect: { id: profileId },
+        },
       },
-    })
+    });
+  }
+
+  connectUtoT(userId: string, id: string) {
+    return this.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        Trucks: {
+          connect: { id: id },
+        },
+      },
+    });
+  }
+
+  disconnectUtoT(userId: string, id: string) {
+    return this.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        Trucks: {
+          disconnect: { id: id },
+        },
+      },
+    });
   }
 
   //=============================================================================================//
@@ -159,12 +188,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         email,
       },
     });
-    if(id != "1"){
+    if (id != '1') {
       if (user && user.id != id) {
         throw new ConflictException('O email inserido já possui cadastro.');
       }
-    }else{
-      if(user){
+    } else {
+      if (user) {
         throw new ConflictException('O email inserido já possui cadastro.');
       }
     }
@@ -175,11 +204,26 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     data.password = await bcrypt.hash(data.password, salt);
     return this.profile.create({
       data,
+      select:{
+        id:true,
+        email:true,
+        image:true,
+        role:true,
+        password:false,
+      }
     });
   }
 
   findAllProfiles() {
-    return this.profile.findMany();
+    return this.profile.findMany({
+      select:{
+        id:true,
+        email:true,
+        image:true,
+        role:true,
+        password:false,
+      }
+    });
   }
 
   findUniqProfile(id: string) {
@@ -187,6 +231,13 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       where: {
         id,
       },
+      select:{
+        id:true,
+        email:true,
+        image:true,
+        role:true,
+        password:false,
+      }
     });
   }
 
@@ -196,6 +247,13 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       where: {
         id,
       },
+      select:{
+        id:true,
+        email:true,
+        image:true,
+        role:true,
+        password:false,
+      }
     });
   }
 
@@ -213,329 +271,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       },
     });
 
-    return this.removeUser(user.User.id);
-  }
-
-  //=============================================================================================//
-  // #UserTruck
-
-  async existUserTruckId(id: string) {
-    if (id.length < 24 || id.length > 24) {
-      throw new BadRequestException(
-        'O caminhão com o id solicitado não existe',
-      );
-    }
-    if (
-      !(await this.userTruck.count({
-        where: {
-          id,
-        },
-      }))
-    ) {
-      throw new BadRequestException(
-        'O caminhão com o id solicitado não existe',
-      );
-    }
-  }
-
-  createUserTruck(data: CreatetUsertruckDto) {
-    return this.userTruck.create({
-      data,
-    });
-  }
-
-  async connectUserTruck(id: string, data: ConnectUsertruckDto) {
-    const where = {
-      truckId: data.truckId ? data.truckId : undefined,
-      modelId: data.modelId ? data.modelId : undefined,
-      capacityId: data.capacityId ? data.capacityId : undefined,
-    };
-
-    const userTruck = await this.userTruck.findFirst({
-      where: {
-        truckId:{
-          equals: where.truckId,
-        },
-        modelId:{
-          equals: where.modelId,
-        },
-        capacityId:{
-          equals: where.capacityId,
-        }
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (!userTruck) {
-      const idd = await this.userTruck.create({
-        data: {
-          truckId: data.truckId,
-          modelId: where.modelId,
-          capacityId: where.capacityId,
-        },
-        select: {
-          id: true,
-        },
-      });
-
-      return this.user.update({
-        data: {
-          userTrucks: {
-            connect: { id: idd.id },
-          },
-        },
-        where: {
-          id,
-        },
-      });
-    }
-
-    return this.user.update({
-      data: {
-        userTrucks: {
-          connect: { id: userTruck.id },
-        },
-      },
-      where: {
-        id,
-      },
-    });
-  }
-
-  async disconnectUserTruck(id: string, data: ConnectUsertruckDto) {
-    const where = {
-      truckId: data.truckId ? data.truckId : undefined,
-      modelId: data.modelId ? data.modelId : undefined,
-      capacityId: data.capacityId ? data.capacityId : undefined,
-    };
-
-    const userTruck = await this.userTruck.findFirst({
-      where: {
-        truckId:{
-          equals: where.truckId,
-        },
-        modelId:{
-          equals: where.modelId,
-        },
-        capacityId:{
-          equals: where.capacityId,
-        }
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (!userTruck) {
-      throw new NotFoundException('O caminhão não foi encontrado');
-    }
-
-    return this.user.update({
-      data: {
-        userTrucks: {
-          disconnect: { id: userTruck.id },
-        },
-      },
-      where: {
-        id,
-      },
-    });
-  }
-
-  findAllUserTrucks() {
-    return this.userTruck.findMany({
-      select: {
-        id: true,
-      },
-    });
-  }
-
-  findUniqUserTruck(id: string) {
-    return this.userTruck.findUnique({
-      where: {
-        id,
-      },
-    });
-  }
-
-  updateUserTruck(id: string, data: UpdateUsertruckDto) {
-    return this.userTruck.update({
-      data,
-      where: {
-        id,
-      },
-    });
-  }
-
-  removeUserTruck(id: string) {
-    return this.capacity.delete({
-      where: {
-        id,
-      },
-    });
-  }
-
-  //=============================================================================================//
-  // #Capacity
-
-  async existCapacityId(id: string) {
-    if (id.length < 24 || id.length > 24) {
-      throw new BadRequestException(
-        'A capacidade com o id solicitado não existe',
-      );
-    }
-    if (
-      !(await this.capacity.count({
-        where: {
-          id,
-        },
-      }))
-    ) {
-      throw new BadRequestException(
-        'a capacidade com o id solicitado não existe',
-      );
-    }
-  }
-
-  createCapacity(data: CreateCapacityDto) {
-    return this.capacity.create({
-      data,
-    });
-  }
-
-  findAllCapacitys() {
-    return this.capacity.findMany({
-      select: {
-        id: true,
-        capacity: true,
-        engine: true,
-        modelId: false,
-      },
-    });
-  }
-
-  findUniqCapacity(id: string) {
-    return this.model.findUnique({
-      where: {
-        id,
-      },
-    });
-  }
-
-  updateCapacity(id: string, data: UpdateCapacityDto) {
-    return this.capacity.update({
-      data,
-      where: {
-        id,
-      },
-    });
-  }
-
-  removeCapacity(id: string) {
-    return this.capacity.delete({
-      where: {
-        id,
-      },
-    });
-  }
-
-  //=============================================================================================//
-  // #Model
-
-  async existModelId(id: string) {
-    if (id.length < 24 || id.length > 24) {
-      throw new BadRequestException('O modelo com o id solicitado não existe');
-    }
-    if (
-      !(await this.model.count({
-        where: {
-          id,
-        },
-      }))
-    ) {
-      throw new BadRequestException('O modelo com o id solicitado não existe');
-    }
-  }
-
-  createModel(data: CreateModelDto) {
-    return this.model.create({
-      data,
-    });
-  }
-
-  connectCapacity(id: string, idd: string) {
-    HttpCode(202);
-    return this.model.update({
-      data: {
-        Capacity: {
-          connect: { id: idd },
-        },
-      },
-      where: {
-        id,
-      },
-    });
-  }
-
-  disconnectCapacity(id: string, idd: string) {
-    HttpCode(301);
-    return this.model.update({
-      data: {
-        Capacity: {
-          disconnect: { id: idd },
-        },
-      },
-      where: {
-        id,
-      },
-    });
-  }
-
-  findAllModels() {
-    return this.model.findMany({
-      select: {
-        id: true,
-        image: true,
-        year: true,
-        Capacity: {
-          select: {
-            id: true,
-            capacity: true,
-            engine: true,
-            modelId: false,
-            Model: false,
-          },
-        },
-        capacityId: false,
-      },
-    });
-  }
-
-  findUniqModel(id: string) {
-    return this.model.findUnique({
-      where: {
-        id,
-      },
-    });
-  }
-
-  updateModel(id: string, data: UpdateModelDto) {
-    return this.model.update({
-      data,
-      where: {
-        id,
-      },
-    });
-  }
-
-  removeModel(id: string) {
-    return this.model.delete({
-      where: {
-        id,
-      },
-    });
+    await this.removeUser(user.User.id);
+    await this.removeCart(user.User.id);
+    await this.removeShop(user.User.id)
   }
 
   //=============================================================================================//
@@ -566,52 +304,35 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     });
   }
 
-  connectModel(id: string, idd: string) {
-    return this.truck.update({
-      data: {
-        Model: {
-          connect: { id: idd },
-        },
-      },
-      where: {
-        id,
-      },
-    });
-  }
-
-  disconnectModel(id: string, idd: string) {
-    return this.truck.update({
-      data: {
-        Model: {
-          disconnect: { id: idd },
-        },
-      },
-      where: {
-        id,
-      },
-    });
-  }
-
   findAllTrucks() {
     return this.truck.findMany({
       select: {
         id: true,
         brand: true,
         image: true,
+        year: true,
         pound: true,
-        Model: {
-          select: {
-            id: true,
-            image: true,
-            Capacity: {
-              select: {
-                id: true,
-                capacity: true,
-                engine: true,
-              },
-            },
-          },
-        },
+        modelImage: true,
+        capacity: true,
+        engine: true,
+      },
+    });
+  }
+
+  findAllTrucksB(brand: string) {
+    return this.truck.findMany({
+      where: {
+        brand,
+      },
+      select: {
+        id: true,
+        brand: true,
+        image: true,
+        year: true,
+        pound: true,
+        modelImage: true,
+        capacity: true,
+        engine: true,
       },
     });
   }
@@ -625,14 +346,11 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         id: true,
         brand: true,
         image: true,
-        Model: {
-          select: {
-            id: true,
-            year: true,
-            image: true,
-            Capacity: true,
-          },
-        },
+        year: true,
+        pound: true,
+        modelImage: true,
+        capacity: true,
+        engine: true,
       },
     });
   }
@@ -654,8 +372,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     });
   }
 
-//   //=============================================================================================//
-//   // #Brand
+  //   //=============================================================================================//
+  //   // #Brand
 
   async existBrandId(id: string) {
     if (id.length < 24 || id.length > 24) {
@@ -707,8 +425,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     });
   }
 
-//   //=============================================================================================//
-//   // #Product
+  //   //=============================================================================================//
+  //   // #Product
 
   async existProductId(id: string) {
     if (id.length < 24 || id.length > 24) {
@@ -769,7 +487,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   connectTP(idd: string, id: string) {
     return this.product.update({
       data: {
-        UserTruck: {
+        Truck: {
           connect: { id: idd },
         },
       },
@@ -782,7 +500,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   disconnectTP(idd: string, id: string) {
     return this.product.update({
       data: {
-        UserTruck: {
+        Truck: {
           disconnect: { id: idd },
         },
       },
@@ -792,69 +510,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     });
   }
 
-
-//     //=============================================================================================//
-//   // #Item
-
-  async existItemId(id: string) {
-    if (id.length < 24 || id.length > 24) {
-      throw new BadRequestException('O item com o id solicitado não existe');
-    }
-    if (
-      !(await this.item.count({
-        where: {
-          id,
-        },
-      }))
-    ) {
-      throw new BadRequestException('O item com o id solicitado não existe');
-    }
-  }
-
-  createItem(data: CreateItemDto) {
-    return this.item.create({
-      data,
-    });
-  }
-
-  findAllItems() {
-    return this.item.findMany();
-  }
-
-  findUniqItem(id: string) {
-    return this.item.findUnique({
-      where: {
-        id,
-      },
-    });
-  }
-
-  updateItem(id: string, data: UpdateItemDto) {
-    return this.item.update({
-      data,
-      where: {
-        id,
-      },
-    });
-  }
-
-  removeItem(id: string) {
-    return this.item.delete({
-      where: {
-        id,
-      },
-    });
-  }
-
-
-//   //=============================================================================================//
-//   // #Combo
+  //   //=============================================================================================//
+  //   // #Combo
 
   async existComboId(id: string) {
     if (id.length < 24 || id.length > 24) {
-      throw new BadRequestException(
-        'O combo com o id solicitado não existe',
-      );
+      throw new BadRequestException('O combo com o id solicitado não existe');
     }
     if (
       !(await this.combo.count({
@@ -863,9 +524,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         },
       }))
     ) {
-      throw new BadRequestException(
-        'O combo com o id solicitado não existe',
-      );
+      throw new BadRequestException('O combo com o id solicitado não existe');
     }
   }
 
@@ -882,7 +541,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   findUniqCombo(id: string) {
     return this.combo.findUnique({
       where: {
-        id
+        id,
       },
     });
   }
@@ -904,69 +563,16 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     });
   }
 
-//   //=============================================================================================//
-//   // #Promotion
+  //   //=============================================================================================//
+  //   // #Cart
 
-  async existPromotionId(id: string) {
-    if (id.length < 24 || id.length > 24) {
-      throw new BadRequestException(
-        'A promoção com o id solicitado não existe',
-      );
-    }
+  async existCartId(id: string, userId: string) {
     if (
-      !(await this.promotion.count({
-        where: {
-          id,
-        },
-      }))
+      id.length < 24 ||
+      id.length > 24 ||
+      userId.length < 24 ||
+      userId.length > 24
     ) {
-      throw new BadRequestException(
-        'A promoção com o id solicitado não existe',
-      );
-    }
-  }
-
-  createPromotion(data: CreatePromotionDto) {
-    return this.promotion.create({
-      data,
-    });
-  }
-
-  findAllPromotions() {
-    return this.promotion.findMany();
-  }
-
-  findUniqPromotion(id: string) {
-    return this.promotion.findUnique({
-      where: {
-        id
-      },
-    });
-  }
-
-  updatePromotion(id: string, data: UpdatePromotionDto) {
-    return this.promotion.update({
-      data,
-      where: {
-        id,
-      },
-    });
-  }
-
-  removePromotion(id: string) {
-    return this.promotion.delete({
-      where: {
-        id,
-      },
-    });
-  }
-  
-
-//   //=============================================================================================//
-//   // #Cart
-
-  async existCartId(id: string,userId: string) {
-    if (id.length < 24 || id.length > 24 || userId.length < 24 || userId.length > 24) {
       throw new BadRequestException(
         'Problema com o id solicitado, não existe?',
       );
@@ -975,40 +581,38 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       !(await this.user.count({
         where: {
           id: userId,
-          Cart:id,
+          Cart: {
+            id: id,
+          },
         },
       }))
     ) {
-      throw new BadRequestException(
-        'O Carrinho id solicitado não existe',
-      );
+      throw new BadRequestException('O Carrinho solicitado não existe');
     }
   }
 
-  existGoCartId(id:string, idd:string){
-
-  }
+  existGoCartId(id: string, idd: string) {}
 
   createCart(data: CreateCartDto) {
-    return this.promotion.create({
+    return this.cart.create({
       data,
     });
   }
 
   findAllCarts() {
-    return this.promotion.findMany();
+    return this.cart.findMany();
   }
 
   findUniqCart(id: string) {
-    return this.promotion.findUnique({
+    return this.cart.findUnique({
       where: {
-        id
+        id,
       },
     });
   }
 
-  updateCart(id: string, data: UpdatePromotionDto) {
-    return this.promotion.update({
+  updateCart(id: string, data: UpdateCartDto) {
+    return this.cart.update({
       data,
       where: {
         id,
@@ -1017,69 +621,77 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   }
 
   removeCart(id: string) {
-    return this.promotion.delete({
+    return this.cart.delete({
       where: {
         id,
       },
     });
   }
-  
 
-//   //=============================================================================================//
-//   // #Promotion
+  //   //=============================================================================================//
+  //   // #Cart
 
-  // async existPromotionId(id: string) {
-  //   if (id.length < 24 || id.length > 24) {
-  //     throw new BadRequestException(
-  //       'A promoção com o id solicitado não existe',
-  //     );
-  //   }
-  //   if (
-  //     !(await this.promotion.count({
-  //       where: {
-  //         id,
-  //       },
-  //     }))
-  //   ) {
-  //     throw new BadRequestException(
-  //       'A promoção com o id solicitado não existe',
-  //     );
-  //   }
-  // }
+  async existShopId(id: string, userId: string) {
+    if (
+      id.length < 24 ||
+      id.length > 24 ||
+      userId.length < 24 ||
+      userId.length > 24
+    ) {
+      throw new BadRequestException(
+        'Problema com o id solicitado, não existe?',
+      );
+    }
+    if (
+      !(await this.user.count({
+        where: {
+          id: userId,
+          Cart: {
+            Shop: {
+              id: id,
+            },
+          },
+        },
+      }))
+    ) {
+      throw new BadRequestException('O ShopList solicitado não existe');
+    }
+  }
 
-  // createPromotion(data: CreatePromotionDto) {
-  //   return this.promotion.create({
-  //     data,
-  //   });
-  // }
+  existGoShopId(id: string, idd: string) {}
 
-  // findAllPromotions() {
-  //   return this.promotion.findMany();
-  // }
+  createShop(data: CreateShopDto) {
+    return this.shop.create({
+      data,
+    });
+  }
 
-  // findUniqPromotion(id: string) {
-  //   return this.promotion.findUnique({
-  //     where: {
-  //       id
-  //     },
-  //   });
-  // }
+  findAllShops() {
+    return this.shop.findMany();
+  }
 
-  // updatePromotion(id: string, data: UpdatePromotionDto) {
-  //   return this.promotion.update({
-  //     data,
-  //     where: {
-  //       id,
-  //     },
-  //   });
-  // }
+  findUniqShop(id: string) {
+    return this.shop.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
 
-  // removePromotion(id: string) {
-  //   return this.promotion.delete({
-  //     where: {
-  //       id,
-  //     },
-  //   });
-  // }
-  
+  updateShop(id: string, data: UpdateShopDto) {
+    return this.shop.update({
+      data,
+      where: {
+        id,
+      },
+    });
+  }
+
+  removeShop(id: string) {
+    return this.shop.delete({
+      where: {
+        id,
+      },
+    });
+  }
 }

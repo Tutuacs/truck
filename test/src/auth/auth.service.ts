@@ -22,15 +22,10 @@ export class AuthService {
   }
 
   async register(register: LoginDto) {
-    const id = "1";
-    const newRegisterU = new CreateUserDto();
     const newRegisterP = new CreateProfileDto();
-    await this.prisma.existProfileEmail(id,register.email);
     newRegisterP.email = register.email;
     newRegisterP.password = register.password;
-    const user = await this.prisma.createUser(newRegisterU);
-    newRegisterP.userId = user.id;
-    return this.prisma.createProfile(newRegisterP);
+    return this.prisma.register(newRegisterP)
   }
 
   async createToken(profile: {

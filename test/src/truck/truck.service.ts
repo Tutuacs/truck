@@ -12,22 +12,26 @@ export class TruckService {
     return this.prisma.createTruck(data);
   }
 
-  async connect(id: string, idd: string, connect: string) {
+  async connect(id: string, userId: string, connect: string) {
     if(connect == "connect"){
-      await this.prisma.existModelId(idd);
+      await this.prisma.existUserId(userId);
       await this.prisma.existTruckId(id);
-      return this.prisma.connectModel(id, idd);
+      return this.prisma.connectUtoT(userId, id);
     }else if(connect == "disconnect"){
-      await this.prisma.existModelId(idd);
+      await this.prisma.existUserId(userId);
       await this.prisma.existTruckId(id);
-      return this.prisma.disconnectModel(id, idd);
+      return this.prisma.connectUtoT(userId, id);
     }else{
       throw new NotImplementedException(`Opção "${connect}" não conhecida`);
     }
   }
 
   findAll(brand: string) {
-    return this.prisma.findAllTrucks();
+    if(!brand){
+      return this.prisma.findAllTrucks();
+    }else{
+      return this.prisma.findAllTrucksB(brand);
+    }
   }
 
   findOne(id: string) {

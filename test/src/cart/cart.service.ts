@@ -19,28 +19,25 @@ export class CartService {
   ) {
     if (connect == 'connect') {
       await this.prisma.existCartId(id, userId);
-      return this.prisma.existGoCartId(idd);
+      return this.prisma.existGoCartId(id,idd);
     } else if (connect == 'disconnect') {
       await this.prisma.existCartId(id, userId);
-      return this.prisma.existGoCartId(idd);
+      return this.prisma.existGoCartId(id,idd);
     } else {
       throw new NotImplementedException(`Opção "${connect}" não conhecida`);
     }
   }
 
   findAll() {
-    return `This action returns all cart`;
+    return this.prisma.findAllCarts();
   }
 
   findOne(id: string) {
-    return `This action returns a #${id} cart`;
+    return this.prisma.findUniqCart(id);
   }
 
   update(id: string, data: UpdateCartDto) {
-    return `This action updates a #${id} cart`;
+    return this.prisma.updateCart(id,data);
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} cart`;
-  }
 }
