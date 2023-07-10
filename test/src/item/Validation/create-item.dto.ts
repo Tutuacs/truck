@@ -6,7 +6,7 @@ export class CreateItemDto {
     @IsOptional()
     @Type(() => Number)
     @IsNumber()
-    minQuantity:number;
+    quantity:number;
 
     @IsNotEmpty()
     @Type(() => Number)

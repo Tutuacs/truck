@@ -86,14 +86,16 @@ model Combo {
   Product Product[]
   Cart    Cart[]    @relation(fields: [cartId], references: [id])
   cartId  String[]  @db.ObjectId
+  Item    Item[]
 }
 
 model Item {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   quantity  Int      @default(1)
-  combo     Boolean  @default(false)
-  Product   Product? @relation(fields: [productId], references: [id])
+  comboId   String?  @db.ObjectId
   productId String?  @db.ObjectId
+  Product   Product? @relation(fields: [productId], references: [id])
+  Combo     Combo?   @relation(fields: [comboId], references: [id])
   Order     Order[]  @relation(fields: [orderId], references: [id])
   orderId   String[] @db.ObjectId
 }

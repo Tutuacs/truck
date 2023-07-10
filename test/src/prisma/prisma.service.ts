@@ -23,6 +23,8 @@ import { UpdateComboDto } from 'src/combo/Validation/update-combo.dto';
 import { CreateCartDto } from 'src/cart/Validation/create-cart.dto';
 import { UpdateCartDto } from 'src/cart/Validation/update-cart.dto';
 import * as bcrypt from 'bcrypt';
+import { CreateItemDto } from 'src/item/Validation/create-item.dto';
+import { UpdateItemDto } from 'src/item/Validation/update-item.dto';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
@@ -551,6 +553,59 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
   removeCombo(id: string) {
     return this.combo.delete({
+      where: {
+        id,
+      },
+    });
+  }
+
+  //   //=============================================================================================//
+  //   // #Combo
+
+  async existItemId(id: string) {
+    if (id.length < 24 || id.length > 24) {
+      throw new BadRequestException('O item com o id solicitado não existe');
+    }
+    if (
+      !(await this.item.count({
+        where: {
+          id,
+        },
+      }))
+    ) {
+      throw new BadRequestException('O item com o id solicitado não existe');
+    }
+  }
+
+  createItem(data: CreateItemDto) {
+    return this.item.create({
+      data,
+    });
+  }
+
+  findAllItems() {
+    return this.item.findMany();
+  }
+
+  findUniqItem(id: string) {
+    return this.item.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
+  updateItem(id: string, data: UpdateItemDto) {
+    return this.item.update({
+      data,
+      where: {
+        id,
+      },
+    });
+  }
+
+  removeItem(id: string) {
+    return this.item.delete({
       where: {
         id,
       },
