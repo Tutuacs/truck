@@ -12,7 +12,6 @@ import { ProductModule } from './product/product.module';
 import { BrandsModule } from './brands/brands.module';
 import { ComboModule } from './combo/combo.module';
 import { CartModule } from './cart/cart.module';
-import { ShopModule } from './shop/shop.module';
 import * as bcrypt from 'bcrypt';
 
 @Module({
@@ -27,7 +26,6 @@ import * as bcrypt from 'bcrypt';
     BrandsModule,
     ComboModule,
     CartModule,
-    ShopModule,
   ],
   controllers: [],
   providers: [],

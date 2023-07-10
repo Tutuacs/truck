@@ -22,8 +22,6 @@ import { CreateComboDto } from 'src/combo/Validation/create-combo.dto';
 import { UpdateComboDto } from 'src/combo/Validation/update-combo.dto';
 import { CreateCartDto } from 'src/cart/Validation/create-cart.dto';
 import { UpdateCartDto } from 'src/cart/Validation/update-cart.dto';
-import { CreateShopDto } from 'src/shop/Validation/create-shop.dto';
-import { UpdateShopDto } from 'src/shop/Validation/update-shop.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -62,9 +60,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     const cartDto = new CreateCartDto();
     cartDto.userId = user.id;
     const cart = await this.createCart(cartDto);
-    const shopDto = new CreateShopDto();
-    shopDto.cartId = cart.id;
-    const shop = await this.createShop(shopDto);
     data.userId = user.id;
     return this.createProfile(data);
   }
@@ -273,7 +268,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
     await this.removeUser(user.User.id);
     await this.removeCart(user.User.id);
-    await this.removeShop(user.User.id)
   }
 
   //=============================================================================================//
@@ -628,70 +622,4 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     });
   }
 
-  //   //=============================================================================================//
-  //   // #Cart
-
-  async existShopId(id: string, userId: string) {
-    if (
-      id.length < 24 ||
-      id.length > 24 ||
-      userId.length < 24 ||
-      userId.length > 24
-    ) {
-      throw new BadRequestException(
-        'Problema com o id solicitado, não existe?',
-      );
-    }
-    if (
-      !(await this.user.count({
-        where: {
-          id: userId,
-          Cart: {
-            Shop: {
-              id: id,
-            },
-          },
-        },
-      }))
-    ) {
-      throw new BadRequestException('O ShopList solicitado não existe');
-    }
-  }
-
-  existGoShopId(id: string, idd: string) {}
-
-  createShop(data: CreateShopDto) {
-    return this.shop.create({
-      data,
-    });
-  }
-
-  findAllShops() {
-    return this.shop.findMany();
-  }
-
-  findUniqShop(id: string) {
-    return this.shop.findUnique({
-      where: {
-        id,
-      },
-    });
-  }
-
-  updateShop(id: string, data: UpdateShopDto) {
-    return this.shop.update({
-      data,
-      where: {
-        id,
-      },
-    });
-  }
-
-  removeShop(id: string) {
-    return this.shop.delete({
-      where: {
-        id,
-      },
-    });
-  }
 }
