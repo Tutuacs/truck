@@ -1,4 +1,5 @@
 import {
+  BadGatewayException,
   BadRequestException,
   ConflictException,
   INestApplication,
@@ -201,25 +202,25 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     data.password = await bcrypt.hash(data.password, salt);
     return this.profile.create({
       data,
-      select:{
-        id:true,
-        email:true,
-        image:true,
-        role:true,
-        password:false,
-      }
+      select: {
+        id: true,
+        email: true,
+        image: true,
+        role: true,
+        password: false,
+      },
     });
   }
 
   findAllProfiles() {
     return this.profile.findMany({
-      select:{
-        id:true,
-        email:true,
-        image:true,
-        role:true,
-        password:false,
-      }
+      select: {
+        id: true,
+        email: true,
+        image: true,
+        role: true,
+        password: false,
+      },
     });
   }
 
@@ -228,13 +229,13 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       where: {
         id,
       },
-      select:{
-        id:true,
-        email:true,
-        image:true,
-        role:true,
-        password:false,
-      }
+      select: {
+        id: true,
+        email: true,
+        image: true,
+        role: true,
+        password: false,
+      },
     });
   }
 
@@ -244,13 +245,13 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       where: {
         id,
       },
-      select:{
-        id:true,
-        email:true,
-        image:true,
-        role:true,
-        password:false,
-      }
+      select: {
+        id: true,
+        email: true,
+        image: true,
+        role: true,
+        password: false,
+      },
     });
   }
 
@@ -640,7 +641,91 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     }
   }
 
-  existGoCartId(id: string, idd: string) {}
+  async existGoCartId(userId: string, id: string) {
+    const product = await this.product.count({
+      where: {
+        id,
+      },
+    });
+    if (product) {
+      return this.cart.update({
+        data: {
+          productId: id,
+        },
+        where: {
+          userId,
+        },
+      });
+    } else {
+      const combo = await this.combo.count({
+        where: {
+          id,
+        },
+      });
+
+      if (combo) {
+        return this.cart.update({
+          data: {
+            comboId: id,
+          },
+          where: {
+            userId,
+          },
+        });
+      } else {
+        throw new BadGatewayException(
+          'Ops, parece que ocorreu um erro ao tentar adicionar o produto ao carrinho, atualize a página ou tente novamente mais tarde',
+        );
+      }
+    }
+  }
+
+  async existExitCartId(userId: string, id: string) {
+    const product = await this.product.count({
+      where: {
+        id,
+      },
+    });
+    if (product) {
+      return this.cart.update({
+        data: {
+          Product: {
+            disconnect: {
+              id,
+            },
+          },
+        },
+        where: {
+          userId,
+        },
+      });
+    } else {
+      const combo = await this.combo.count({
+        where: {
+          id,
+        },
+      });
+
+      if (combo) {
+        return this.cart.update({
+          data: {
+            Combo: {
+              disconnect: {
+                id,
+              },
+            },
+          },
+          where: {
+            userId,
+          },
+        });
+      } else {
+        throw new BadGatewayException(
+          'Ops, parece que ocorreu um erro ao tentar adicionar o produto ao carrinho, atualize a página ou tente novamente mais tarde',
+        );
+      }
+    }
+  }
 
   createCart(data: CreateCartDto) {
     return this.cart.create({
@@ -676,5 +761,4 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       },
     });
   }
-
 }

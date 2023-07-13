@@ -17,7 +17,7 @@ export class ProductController {
   }
 
   @Acess(Role.Admin)
-  @Post(':connect/:idd/:id')
+  @Post('connectTruck/:connect/:idd/:id')
   connect(@Param('connect') connect: string, @Param('idd') idd: string, @Param('id') id: string) {
     return this.productService.connect(connect,idd,id);
   }

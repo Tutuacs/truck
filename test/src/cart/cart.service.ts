@@ -12,19 +12,17 @@ export class CartService {
   }
 
   async connectProduct(
-    connect: string,
-    id: string,
-    idd: string,
+    param:{connect: string, option: string, id:string},
     userId: string,
   ) {
-    if (connect == 'connect') {
-      await this.prisma.existCartId(id, userId);
-      return this.prisma.existGoCartId(id,idd);
-    } else if (connect == 'disconnect') {
-      await this.prisma.existCartId(id, userId);
-      return this.prisma.existGoCartId(id,idd);
+    if (param.connect == 'connect') {
+      await this.prisma.existUserId(userId);
+      return this.prisma.existGoCartId(userId,param.id);
+    } else if (param.connect == 'disconnect') {
+      await this.prisma.existUserId(userId);
+      return this.prisma.existExitCartId(userId,param.id);
     } else {
-      throw new NotImplementedException(`Opção "${connect}" não conhecida`);
+      throw new NotImplementedException(`Opção "${param.connect}" não conhecida`);
     }
   }
 

@@ -13,9 +13,6 @@ export class ProductService {
   }
 
   async connect(connect: string, idd: string, id: string) {
-    console.log(connect)
-    console.log(idd)
-    console.log(id)
     if (connect === 'connect') {
       await this.prisma.existTruckId(idd);
       await this.prisma.existProductId(id);
