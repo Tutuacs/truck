@@ -23,9 +23,9 @@ import { CreateComboDto } from 'src/combo/Validation/create-combo.dto';
 import { UpdateComboDto } from 'src/combo/Validation/update-combo.dto';
 import { CreateCartDto } from 'src/cart/Validation/create-cart.dto';
 import { UpdateCartDto } from 'src/cart/Validation/update-cart.dto';
-import * as bcrypt from 'bcrypt';
 import { CreateItemDto } from 'src/item/Validation/create-item.dto';
 import { UpdateItemDto } from 'src/item/Validation/update-item.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
