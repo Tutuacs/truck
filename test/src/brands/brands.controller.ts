@@ -5,15 +5,15 @@ import { UpdateBrandDto } from './Validation/update-brand.dto';
 import { AuthGuard, RoleGuard } from 'src/guards';
 import { Acess, Role } from 'src/decorators';
 
-@UseGuards(AuthGuard, RoleGuard)
-@Controller('brands')
+@Controller('brand')
 export class BrandsController {
   constructor(private readonly brandsService: BrandsService) {}
-
+  
+  @UseGuards(AuthGuard, RoleGuard)
   @Acess(Role.Admin)
   @Post()
-  create(@Body() createBrandDto: CreateBrandDto) {
-    return this.brandsService.create(createBrandDto);
+  create(@Body() data: CreateBrandDto) {
+    return this.brandsService.create(data);
   }
   
   @Get()
@@ -23,18 +23,20 @@ export class BrandsController {
   
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.brandsService.findOne(+id);
+    return this.brandsService.findOne(id);
   }
   
+  @UseGuards(AuthGuard, RoleGuard)
   @Acess(Role.Admin)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBrandDto: UpdateBrandDto) {
-    return this.brandsService.update(+id, updateBrandDto);
+  update(@Param('id') id: string, @Body() data: UpdateBrandDto) {
+    return this.brandsService.update(id, data);
   }
-
+  
+  @UseGuards(AuthGuard, RoleGuard)
   @Acess(Role.Admin)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.brandsService.remove(+id);
+    return this.brandsService.remove(id);
   }
 }

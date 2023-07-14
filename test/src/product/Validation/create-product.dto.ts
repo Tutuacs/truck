@@ -10,10 +10,13 @@ export class CreateProductDto {
   description: string;
 
   @Type(() => Number)
-  @IsNumber()
+  @IsNumber({
+    allowNaN: false,
+  })
   price: number;
 
   @IsOptional()
+  @IsString()
   brandsId: string;
 
   @IsOptional()
@@ -25,14 +28,27 @@ export class CreateProductDto {
   promotionTo: Date;
 
   @IsOptional()
+  @Type(() => Number)
+  @IsNumber({
+    allowNaN: false,
+  })
   promotionPrice: number;
 
   @IsOptional()
+  @Type(() => Number)
+  @IsNumber({
+    allowNaN: false,
+    
+  })
   minPromotion: number;
 
   @IsOptional()
   comboId: string;
 
   @IsOptional()
+  @Type(() => Number)
+  @IsNumber({
+    allowNaN: false,
+  })
   minCombo: number;
 }

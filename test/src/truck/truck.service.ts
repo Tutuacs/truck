@@ -27,7 +27,7 @@ export class TruckService {
   }
 
   findAll(brand: string) {
-    if(!brand){
+    if(brand=="brand"){
       return this.prisma.findAllTrucks();
     }else{
       return this.prisma.findAllTrucksB(brand);

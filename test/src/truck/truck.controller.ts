@@ -12,14 +12,14 @@ import { TruckService } from './truck.service';
 import { CreateTruckDto } from './Validation/create-truck.dto';
 import { UpdateTruckDto } from './Validation/update-truck.dto';
 import { UserAuth } from 'src/decorators/UserAtuh.decorator';
-import { AuthGuard, RoleGuard } from 'src/guards';
+import { RoleGuard } from 'src/guards';
 import { Acess, Role } from 'src/decorators';
 
-@UseGuards(AuthGuard,RoleGuard)
 @Controller('truck')
 export class TruckController {
   constructor(private readonly truckService: TruckService) {}
 
+  @UseGuards(RoleGuard)
   @Acess(Role.Admin)
   @Post()
   create(@Body() data: CreateTruckDto) {
@@ -47,12 +47,14 @@ export class TruckController {
     return this.truckService.findOne(id);
   }
 
+  @UseGuards(RoleGuard)
   @Acess(Role.Admin)
   @Patch(':id')
   update(@Param() id: string, @Body() data: UpdateTruckDto) {
     return this.truckService.update(id, data);
   }
-  
+
+  @UseGuards(RoleGuard)
   @Acess(Role.Admin)
   @Delete(':id')
   remove(@Param() id: string) {

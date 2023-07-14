@@ -312,6 +312,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         modelImage: true,
         capacity: true,
         engine: true,
+        productId:false,
+        userId:false,
       },
     });
   }
@@ -319,7 +321,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   findAllTrucksB(brand: string) {
     return this.truck.findMany({
       where: {
-        brand,
+        brand:{
+          equals:brand,
+          mode: 'insensitive',
+        }
       },
       select: {
         id: true,

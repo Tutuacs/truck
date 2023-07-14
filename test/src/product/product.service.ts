@@ -7,20 +7,35 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ProductService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(data: CreateProductDto) {
+  async create(data: CreateProductDto) {
     data.price = Number(data.price);
+    if (data.promotionPrice) {
+      data.promotionPrice = Number(data.promotionPrice);
+    }
+    if(data.minPromotion) {
+      data.minPromotion = Number(data.minPromotion);
+    }
+    if(data.minCombo) {
+      data.minCombo = Number(data.minCombo);
+    }
+    if (data.brandsId) {
+      await this.prisma.existBrandId(data.brandsId);
+    }
+    if (data.comboId) {
+      await this.prisma.existBrandId(data.comboId);
+    }
     return this.prisma.createProduct(data);
   }
 
-  async connect(connect: string, idd: string, id: string) {
+  async connect(connect: string, truckId: string, productId: string) {
     if (connect === 'connect') {
-      await this.prisma.existTruckId(idd);
-      await this.prisma.existProductId(id);
-      return this.prisma.connectTP(idd,id);
+      await this.prisma.existTruckId(truckId);
+      await this.prisma.existProductId(productId);
+      return this.prisma.connectTP(truckId, productId);
     } else if (connect === 'disconnect') {
-      await this.prisma.existTruckId(idd);
-      await this.prisma.existProductId(id);
-      return this.prisma.disconnectTP(idd,id);
+      await this.prisma.existTruckId(truckId);
+      await this.prisma.existProductId(productId);
+      return this.prisma.disconnectTP(truckId, productId);
     } else {
       throw new NotFoundException('Comando não reconhecido');
     }
