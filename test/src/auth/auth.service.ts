@@ -30,10 +30,11 @@ export class AuthService {
 
   async createToken(profile: {
     id: string;
-    role: number;
     email: string;
     userId: string;
+    role: number;
   }) {
+    console.log(profile);
     return {
       token: this.jwt.sign(
         {

@@ -8,11 +8,11 @@ export const UserAuth = createParamDecorator(
   (filterData: string, context: ExecutionContext) => {
     const request = context.switchToHttp().getRequest();
 
-    if (request.profile) {
+    if (request.token) {
       if (filterData) {
-        return request.profile[filterData];
+        return request.token[filterData];
       } else {
-        return request.profile;
+        return request.token;
       }
     } else {
       throw new ForbiddenException(

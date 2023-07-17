@@ -24,10 +24,6 @@ export class AuthGuard implements CanActivate {
 
       return true;
     } catch {
-      console.log({
-        AuthGuard:
-          'src/guards/AuthGuard: Token não identificado.(token não valido)',
-      });
       return false;
     }
   }

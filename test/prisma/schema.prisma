@@ -64,11 +64,13 @@ model Product {
   id             String    @id @default(auto()) @map("_id") @db.ObjectId
   name           String
   description    String?
+  image          String?
   price          Float
   Brands         Brands?   @relation(fields: [brandsId], references: [id])
   brandsId       String?   @db.ObjectId
   Truck          Truck[]   @relation(fields: [truckId], references: [id])
   truckId        String[]  @db.ObjectId
+  promotion      Boolean   @default(false)
   promotionFrom  DateTime?
   promotionTo    DateTime?
   promotionPrice Float?

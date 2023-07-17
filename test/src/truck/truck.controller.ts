@@ -12,7 +12,7 @@ import { TruckService } from './truck.service';
 import { CreateTruckDto } from './Validation/create-truck.dto';
 import { UpdateTruckDto } from './Validation/update-truck.dto';
 import { UserAuth } from 'src/decorators/UserAtuh.decorator';
-import { RoleGuard } from 'src/guards';
+import { AuthGuard, RoleGuard } from 'src/guards';
 import { Acess, Role } from 'src/decorators';
 
 @Controller('truck')
@@ -26,6 +26,7 @@ export class TruckController {
     return this.truckService.create(data);
   }
 
+  @UseGuards(AuthGuard, RoleGuard)
   @Post(':connect/:id')
   connect(
     @Param('connect') connect: string,
@@ -57,7 +58,7 @@ export class TruckController {
   @UseGuards(RoleGuard)
   @Acess(Role.Admin)
   @Delete(':id')
-  remove(@Param() id: string) {
+  remove(@Param('id') id: string) {
     return this.truckService.remove(id);
   }
 }

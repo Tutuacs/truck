@@ -164,6 +164,13 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       where: {
         email: login.email,
       },
+      select: {
+        id: true,
+        userId: true,
+        role: true,
+        email: true,
+        password: true,
+      },
     });
     if (user) {
       if (!(await bcrypt.compare(login.password, user.password))) {
@@ -312,8 +319,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         modelImage: true,
         capacity: true,
         engine: true,
-        productId:false,
-        userId:false,
+        productId: false,
+        userId: false,
       },
     });
   }
@@ -321,10 +328,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   findAllTrucksB(brand: string) {
     return this.truck.findMany({
       where: {
-        brand:{
-          equals:brand,
+        brand: {
+          equals: brand,
           mode: 'insensitive',
-        }
+        },
       },
       select: {
         id: true,
@@ -766,4 +773,179 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       },
     });
   }
+
+  //   //=============================================================================================//
+  //   // #Show
+
+  async unlogged(skip: number, take: number) {
+    return this.product.findMany({
+      skip,
+      take,
+      orderBy: {
+        promotion: 'desc',
+      },
+    });
+  }
+
+  // async logged(userId: string){
+  //   return this.product.groupBy({
+  //     by: ['truckId'],
+  //     orderBy:{
+  //       promotionPrice: 'desc',
+  //     },
+  //     where:{
+  //       Truck:{
+  //         every:{
+  //           User:{
+  //             some:{
+  //               id: userId,
+  //             }
+  //           }
+  //         }
+  //       }
+  //     },
+  //   })
+  // }
+
+  async loggedTest(userId: string) {
+    // const relevantProducts = await this.product.findMany({
+    //   orderBy: [
+    //     {
+    //       Truck: {
+
+    //       }
+    //     }
+    //   ],
+    //   include: {
+    //     Truck: {
+    //       select: false,
+    //     },
+    //   },
+    // });
+    return this.product.findMany({
+      where: {
+        promotion: true,
+        OR: [
+          {
+            Truck: {
+              some: {
+                userId: {
+                  has: userId,
+                }
+              },
+            },
+          },
+          {
+            Truck: {
+              none: {
+                userId: {
+                  equals: userId,
+                }
+              },
+            },
+          },
+        ],
+      },
+      orderBy: [
+        {
+          promotion: 'desc',
+        },
+        {
+            truckId: 'desc',
+        },
+        {
+          truckId: 'asc',
+        },
+      ],
+    });
+    // return this.user.findMany({
+    //   select: {
+    //     Trucks: {
+    //       orderBy: {
+    //         User: {
+    //           _count: 'desc',
+    //         },
+    //       },
+    //       select: {
+    //         Product: {
+    //           orderBy: {
+    //             promotion: 'desc',
+    //           },
+    //           select: {
+    //             id: true,
+    //             name: true,
+    //             description: true,
+    //             price: true,
+    //             promotion: true,
+    //             promotionPrice: true,
+    //             image: true,
+    //             promotionTo: true,
+    //             promotionFrom: true,
+    //           },
+    //         },
+    //       },
+    //     },
+    //   },
+    // });
+    // return this.product.findMany({
+    //   orderBy: {
+    //     promotion: 'desc',
+    //     Truck: {
+    //       _count:
+    //     }
+    //   },
+    //   select: {
+    //     id: true,
+    //     name: true,
+    //     description: true,
+    //     price: true,
+    //     promotion: true,
+    //     promotionPrice: true,
+    //     image: true,
+    //     promotionTo: true,
+    //     promotionFrom: true,
+    //     Truck:{
+    //       where:{
+    //         userId: {
+    //           has: userId
+    //         }
+    //       }
+    //     }
+    //   },
+    // });
+
+    return this.user.findMany({
+      where: {
+        id: userId,
+      },
+      include: {
+        Trucks: {
+          include: {
+            Product: {
+              orderBy: {},
+              select: {
+                id: true,
+                name: true,
+                description: true,
+                price: true,
+                promotion: true,
+                promotionPrice: true,
+                image: true,
+                promotionTo: true,
+                promotionFrom: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  async loggedWithTrucks() {}
+
+  async loggedWithShops() {}
+
+  async loggedWithTrucksAndShops() {}
+
+  async products() {}
 }

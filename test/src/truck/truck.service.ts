@@ -42,7 +42,8 @@ export class TruckService {
     return this.prisma.updateTruck(id, data);
   }
 
-  remove(id: string) {
+  async remove(id: string) {
+    await this.prisma.existTruckId(id); 
     return this.prisma.removeTruck(id);
   }
 }
