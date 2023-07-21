@@ -9,7 +9,7 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   create(data: CreateUserDto) {
-    return this.prisma.createUser(data)
+    return this.prisma.createUser(data);
   }
 
   findAll() {

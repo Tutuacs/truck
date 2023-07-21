@@ -27,7 +27,7 @@ export class TruckController {
   }
 
   @UseGuards(AuthGuard, RoleGuard)
-  @Post(':connect/:id')
+  @Post('connectUser/:connect/:id')
   connect(
     @Param('connect') connect: string,
     @Param('id') id: string,

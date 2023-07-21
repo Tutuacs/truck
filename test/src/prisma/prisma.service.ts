@@ -43,9 +43,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   // #User
 
   async existUserId(id: string) {
-    if (id.length < 24 || id.length > 24) {
-      throw new BadRequestException('O usuário com o id solicitado não existe');
-    }
+    // if (id.length < 24 || id.length > 24) {
+    // throw new BadRequestException('O usuário com o id solicitado não existe');
+    // }
     if (
       !(await this.user.count({
         where: {
@@ -145,9 +145,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   // #Profile
 
   async existProfileId(id: string) {
-    if (id.length < 24 || id.length > 24) {
-      throw new BadRequestException('O perfil com o id solicitado não existe');
-    }
+    // if (id.length < 24 || id.length > 24) {
+    // throw new BadRequestException('O perfil com o id solicitado não existe');
+    // }
     if (
       !(await this.profile.count({
         where: {
@@ -284,11 +284,11 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   // #Truck
 
   async existTruckId(id: string) {
-    if (id.length < 24 || id.length > 24) {
-      throw new BadRequestException(
-        'O caminhão com o id solicitado não existe',
-      );
-    }
+    // if (id.length < 24 || id.length > 24) {
+    // throw new BadRequestException(
+    // 'O caminhão com o id solicitado não existe',
+    // );
+    // }
     if (
       !(await this.truck.count({
         where: {
@@ -319,8 +319,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         modelImage: true,
         capacity: true,
         engine: true,
-        productId: false,
-        userId: false,
       },
     });
   }
@@ -385,9 +383,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   //   // #Brand
 
   async existBrandId(id: string) {
-    if (id.length < 24 || id.length > 24) {
-      throw new BadRequestException('A marca com o id solicitado não existe');
-    }
+    // if (id.length < 24 || id.length > 24) {
+    // throw new BadRequestException('A marca com o id solicitado não existe');
+    // }
     if (
       !(await this.brands.count({
         where: {
@@ -438,9 +436,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   //   // #Product
 
   async existProductId(id: string) {
-    if (id.length < 24 || id.length > 24) {
-      throw new BadRequestException('O produto com o id solicitado não existe');
-    }
+    // if (id.length < 24 || id.length > 24) {
+    // throw new BadRequestException('O produto com o id solicitado não existe');
+    // }
     if (
       !(await this.product.count({
         where: {
@@ -465,7 +463,21 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   }
 
   findAllProducts() {
-    return this.product.findMany();
+    return this.product.findMany({
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        brandsId: true,
+        price: true,
+        promotion: true,
+        Truck: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
   }
 
   findUniqProduct(id: string) {
@@ -523,9 +535,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   //   // #Combo
 
   async existComboId(id: string) {
-    if (id.length < 24 || id.length > 24) {
-      throw new BadRequestException('O combo com o id solicitado não existe');
-    }
+    // if (id.length < 24 || id.length > 24) {
+    // throw new BadRequestException('O combo com o id solicitado não existe');
+    // }
     if (
       !(await this.combo.count({
         where: {
@@ -576,9 +588,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   //   // #Combo
 
   async existItemId(id: string) {
-    if (id.length < 24 || id.length > 24) {
-      throw new BadRequestException('O item com o id solicitado não existe');
-    }
+    // if (id.length < 24 || id.length > 24) {
+    // throw new BadRequestException('O item com o id solicitado não existe');
+    // }
     if (
       !(await this.item.count({
         where: {
@@ -662,7 +674,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     if (product) {
       return this.cart.update({
         data: {
-          productId: id,
+          Product: {
+            connect: { id },
+          },
         },
         where: {
           userId,
@@ -678,7 +692,11 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       if (combo) {
         return this.cart.update({
           data: {
-            comboId: id,
+            Combo: {
+              connect: {
+                id,
+              },
+            },
           },
           where: {
             userId,
@@ -808,137 +826,21 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   // }
 
   async loggedTest(userId: string) {
-    // const relevantProducts = await this.product.findMany({
-    //   orderBy: [
-    //     {
-    //       Truck: {
-
-    //       }
-    //     }
-    //   ],
-    //   include: {
-    //     Truck: {
-    //       select: false,
-    //     },
-    //   },
-    // });
-    return this.product.findMany({
-      where: {
-        promotion: true,
-        OR: [
-          {
-            Truck: {
-              some: {
-                userId: {
-                  has: userId,
-                }
-              },
-            },
-          },
-          {
-            Truck: {
-              none: {
-                userId: {
-                  equals: userId,
-                }
-              },
-            },
-          },
-        ],
-      },
-      orderBy: [
-        {
-          promotion: 'desc',
-        },
-        {
-            truckId: 'desc',
-        },
-        {
-          truckId: 'asc',
-        },
-      ],
-    });
-    // return this.user.findMany({
-    //   select: {
-    //     Trucks: {
-    //       orderBy: {
-    //         User: {
-    //           _count: 'desc',
-    //         },
-    //       },
-    //       select: {
-    //         Product: {
-    //           orderBy: {
-    //             promotion: 'desc',
-    //           },
-    //           select: {
-    //             id: true,
-    //             name: true,
-    //             description: true,
-    //             price: true,
-    //             promotion: true,
-    //             promotionPrice: true,
-    //             image: true,
-    //             promotionTo: true,
-    //             promotionFrom: true,
-    //           },
-    //         },
-    //       },
-    //     },
-    //   },
-    // });
-    // return this.product.findMany({
-    //   orderBy: {
-    //     promotion: 'desc',
-    //     Truck: {
-    //       _count:
-    //     }
-    //   },
-    //   select: {
-    //     id: true,
-    //     name: true,
-    //     description: true,
-    //     price: true,
-    //     promotion: true,
-    //     promotionPrice: true,
-    //     image: true,
-    //     promotionTo: true,
-    //     promotionFrom: true,
-    //     Truck:{
-    //       where:{
-    //         userId: {
-    //           has: userId
-    //         }
-    //       }
-    //     }
-    //   },
-    // });
-
-    return this.user.findMany({
-      where: {
-        id: userId,
-      },
-      include: {
-        Trucks: {
-          include: {
-            Product: {
-              orderBy: {},
-              select: {
-                id: true,
-                name: true,
-                description: true,
-                price: true,
-                promotion: true,
-                promotionPrice: true,
-                image: true,
-                promotionTo: true,
-                promotionFrom: true,
-              },
-            },
-          },
-        },
-      },
-    });
+    return this.$queryRaw`
+    SELECT *,
+      (
+        SELECT COUNT(*)
+        FROM "_TruckToUser"
+        WHERE "_TruckToUser"."A" = "Product_Truck"."truckId"
+        AND "_TruckToUser"."B" = ${userId}
+      ) as "commonTrucksCount"
+    FROM "Product"
+    LEFT JOIN (
+      SELECT "A" as "productId", "B" as "truckId"
+      FROM "_ProductToTruck"
+    ) as "Product_Truck" ON "Product"."id" = "Product_Truck"."productId"
+    ORDER BY promotion DESC, "commonTrucksCount" DESC, name
+  `;
   }
 
   async loggedWithTrucks() {}

@@ -6,12 +6,12 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  id            String   @id @default(uuid())
   name          String?
   email         String?
   cpf           String?
@@ -19,34 +19,31 @@ model User {
   company       Boolean  @default(false)
   cnpj          String?
   verifiedEmail Boolean  @default(false)
-  trucksId      String[] @db.ObjectId
-  Trucks        Truck[]  @relation(fields: [trucksId], references: [id])
+  Trucks        Truck[]
   Cart          Cart?
   Order         Order[]
 }
 
 model Profile {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  id       String  @id @default(uuid())
   email    String  @unique
   password String
   role     Int     @default(1)
   image    String?
   User     User?   @relation(fields: [userId], references: [id])
-  userId   String  @unique @db.ObjectId
+  userId   String  @unique
 }
 
 model Cart {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  Product   Product[] @relation(fields: [productId], references: [id])
-  productId String[]  @db.ObjectId
-  User      User?     @relation(fields: [userId], references: [id])
-  userId    String?   @unique @db.ObjectId
-  Combo     Combo[]   @relation(fields: [comboId], references: [id])
-  comboId   String[]  @db.ObjectId
+  id      String    @id @default(uuid())
+  Product Product[]
+  User    User?     @relation(fields: [userId], references: [id])
+  userId  String?   @unique
+  Combo   Combo[]
 }
 
 model Truck {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  id         String    @id @default(uuid())
   image      String?
   pound      Int       @default(0)
   brand      String
@@ -54,64 +51,163 @@ model Truck {
   year       String?
   capacity   String?
   engine     String?
-  User       User[]    @relation(fields: [userId], references: [id])
-  userId     String[]  @db.ObjectId
-  Product    Product[] @relation(fields: [productId], references: [id])
-  productId  String[]  @db.ObjectId
+  User       User[]
+  Product    Product[]
 }
 
 model Product {
-  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  id             String    @id @default(uuid())
   name           String
   description    String?
   image          String?
   price          Float
   Brands         Brands?   @relation(fields: [brandsId], references: [id])
-  brandsId       String?   @db.ObjectId
-  Truck          Truck[]   @relation(fields: [truckId], references: [id])
-  truckId        String[]  @db.ObjectId
+  brandsId       String?
+  Truck          Truck[]
   promotion      Boolean   @default(false)
   promotionFrom  DateTime?
   promotionTo    DateTime?
   promotionPrice Float?
   minPromotion   Int?      @default(1)
-  comboId        String?   @db.ObjectId
+  comboId        String?
   minCombo       Int?      @default(1)
   Combo          Combo?    @relation(fields: [comboId], references: [id])
-  Cart           Cart[]    @relation(fields: [cartId], references: [id])
-  cartId         String[]  @db.ObjectId
+  Cart           Cart[]
   Item           Item[]
 }
 
 model Combo {
-  id      String    @id @default(auto()) @map("_id") @db.ObjectId
+  id      String    @id @default(uuid())
   Product Product[]
-  Cart    Cart[]    @relation(fields: [cartId], references: [id])
-  cartId  String[]  @db.ObjectId
+  Cart    Cart[]
   Item    Item[]
 }
 
 model Item {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(uuid())
   quantity  Int      @default(1)
-  comboId   String?  @db.ObjectId
+  comboId   String?
   Combo     Combo?   @relation(fields: [comboId], references: [id])
-  productId String?  @db.ObjectId
+  productId String?
   Product   Product? @relation(fields: [productId], references: [id])
-  Order     Order[]  @relation(fields: [orderId], references: [id])
-  orderId   String[] @db.ObjectId
+  Order     Order[]
 }
 
 model Order {
-  id     String   @id @default(auto()) @map("_id") @db.ObjectId
-  Item   Item[]   @relation(fields: [itemId], references: [id])
-  itemId String[] @db.ObjectId
-  User   User     @relation(fields: [userId], references: [id])
-  userId String   @db.ObjectId
+  id     String @id @default(uuid())
+  Item   Item[]
+  User   User   @relation(fields: [userId], references: [id])
+  userId String
 }
 
 model Brands {
-  id      String    @id @default(auto()) @map("_id") @db.ObjectId
+  id      String    @id @default(uuid())
   name    String?
   product Product[]
 }
+
+// model User {
+//   id            String   @id @default(auto()) @map("_id") @db.ObjectId
+//   name          String?
+//   email         String?
+//   cpf           String?
+//   profile       Profile?
+//   company       Boolean  @default(false)
+//   cnpj          String?
+//   verifiedEmail Boolean  @default(false)
+//   trucksId      String[] @db.ObjectId
+//   Trucks        Truck[]  @relation(fields: [trucksId], references: [id])
+//   Cart          Cart?
+//   Order         Order[]
+// }
+
+// model Profile {
+//   id       String  @id @default(auto()) @map("_id") @db.ObjectId
+//   email    String  @unique
+//   password String
+//   role     Int     @default(1)
+//   image    String?
+//   User     User?   @relation(fields: [userId], references: [id])
+//   userId   String  @unique @db.ObjectId
+// }
+
+// model Cart {
+//   id        String    @id @default(auto()) @map("_id") @db.ObjectId
+//   Product   Product[] @relation(fields: [productId], references: [id])
+//   productId String[]  @db.ObjectId
+//   User      User?     @relation(fields: [userId], references: [id])
+//   userId    String?   @unique @db.ObjectId
+//   Combo     Combo[]   @relation(fields: [comboId], references: [id])
+//   comboId   String[]  @db.ObjectId
+// }
+
+// model Truck {
+//   id         String    @id @default(auto()) @map("_id") @db.ObjectId
+//   image      String?
+//   pound      Int       @default(0)
+//   brand      String
+//   modelImage String?
+//   year       String?
+//   capacity   String?
+//   engine     String?
+//   User       User[]    @relation(fields: [userId], references: [id])
+//   userId     String[]  @db.ObjectId
+//   Product    Product[] @relation(fields: [productId], references: [id])
+//   productId  String[]  @db.ObjectId
+// }
+
+// model Product {
+//   id             String    @id @default(auto()) @map("_id") @db.ObjectId
+//   name           String
+//   description    String?
+//   image          String?
+//   price          Float
+//   Brands         Brands?   @relation(fields: [brandsId], references: [id])
+//   brandsId       String?   @db.ObjectId
+//   Truck          Truck[]   @relation(fields: [truckId], references: [id])
+//   truckId        String[]  @db.ObjectId
+//   promotion      Boolean   @default(false)
+//   promotionFrom  DateTime?
+//   promotionTo    DateTime?
+//   promotionPrice Float?
+//   minPromotion   Int?      @default(1)
+//   comboId        String?   @db.ObjectId
+//   minCombo       Int?      @default(1)
+//   Combo          Combo?    @relation(fields: [comboId], references: [id])
+//   Cart           Cart[]    @relation(fields: [cartId], references: [id])
+//   cartId         String[]  @db.ObjectId
+//   Item           Item[]
+// }
+
+// model Combo {
+//   id      String    @id @default(auto()) @map("_id") @db.ObjectId
+//   Product Product[]
+//   Cart    Cart[]    @relation(fields: [cartId], references: [id])
+//   cartId  String[]  @db.ObjectId
+//   Item    Item[]
+// }
+
+// model Item {
+//   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+//   quantity  Int      @default(1)
+//   comboId   String?  @db.ObjectId
+//   Combo     Combo?   @relation(fields: [comboId], references: [id])
+//   productId String?  @db.ObjectId
+//   Product   Product? @relation(fields: [productId], references: [id])
+//   Order     Order[]  @relation(fields: [orderId], references: [id])
+//   orderId   String[] @db.ObjectId
+// }
+
+// model Order {
+//   id     String   @id @default(auto()) @map("_id") @db.ObjectId
+//   Item   Item[]   @relation(fields: [itemId], references: [id])
+//   itemId String[] @db.ObjectId
+//   User   User     @relation(fields: [userId], references: [id])
+//   userId String   @db.ObjectId
+// }
+
+// model Brands {
+//   id      String    @id @default(auto()) @map("_id") @db.ObjectId
+//   name    String?
+//   product Product[]
+// }
