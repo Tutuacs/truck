@@ -15,4 +15,8 @@ export class CreateItemDto {
 
     @IsNotEmpty()
     productId: string;
+
+    @IsOptional()
+    @IsNotEmpty()
+    comboId: string;
 }

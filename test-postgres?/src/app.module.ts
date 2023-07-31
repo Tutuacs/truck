@@ -13,6 +13,7 @@ import { BrandsModule } from './brands/brands.module';
 import { ComboModule } from './combo/combo.module';
 import { CartModule } from './cart/cart.module';
 import { ShowModule } from './show/show.module';
+import { OrderModule } from './order/order.module';
 import * as bcrypt from 'bcrypt';
 
 @Module({
@@ -28,6 +29,7 @@ import * as bcrypt from 'bcrypt';
     ComboModule,
     CartModule,
     ShowModule,
+    OrderModule,
   ],
   controllers: [],
   providers: [],

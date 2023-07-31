@@ -34,7 +34,6 @@ export class AuthService {
     userId: string;
     role: number;
   }) {
-    console.log(profile);
     return {
       token: this.jwt.sign(
         {

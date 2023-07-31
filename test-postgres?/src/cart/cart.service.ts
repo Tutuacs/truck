@@ -1,5 +1,4 @@
 import { Injectable, NotImplementedException } from '@nestjs/common';
-import { CreateCartDto } from './Validation/create-cart.dto';
 import { UpdateCartDto } from './Validation/update-cart.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -7,20 +6,31 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class CartService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(data: CreateCartDto) {
-    return 'This action adds a new cart';
-  }
-
   async connectProduct(
     param:{connect: string, option: string, id:string},
     userId: string,
   ) {
+    await this.prisma.existUserId(userId);
     if (param.connect == 'connect') {
-      await this.prisma.existUserId(userId);
-      return this.prisma.existGoCartId(userId,param.id);
+      if(param.option == 'combo'){
+        await this.prisma.existComboId(param.id);
+        return this.prisma.cartConnectComboId(userId,param.id);
+      }else if(param.option == 'product'){
+        await this.prisma.existProductId(param.id);
+        return this.prisma.cartConnectProductId(userId,param.id);
+      }else{
+        throw new NotImplementedException(`Opção "${param.option}" não conhecida`);
+      }
     } else if (param.connect == 'disconnect') {
-      await this.prisma.existUserId(userId);
-      return this.prisma.existExitCartId(userId,param.id);
+      if(param.option == 'combo'){
+        await this.prisma.existComboId(param.id);
+        return this.prisma.cartDisconnectComboId(userId,param.id);
+      }else if(param.option == 'product'){
+        await this.prisma.existProductId(param.id);
+        return this.prisma.cartDisconnectProductId(userId,param.id);
+      }else{
+        throw new NotImplementedException(`Opção "${param.option}" não conhecida`);
+      }
     } else {
       throw new NotImplementedException(`Opção "${param.connect}" não conhecida`);
     }

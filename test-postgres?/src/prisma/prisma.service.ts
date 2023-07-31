@@ -1,5 +1,4 @@
 import {
-  BadGatewayException,
   BadRequestException,
   ConflictException,
   INestApplication,
@@ -33,12 +32,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     await this.$connect();
   }
 
-  async enableShutdownHooks(app: INestApplication) {
-    this.$on('beforeExit', async () => {
-      await app.close();
-    });
-  }
-
+  // async enableShutdownHooks(app: INestApplication) {
+  //   this.$on('beforeExit', async () => {
+  //     await app.close();
+  //   });
+  // }
+ 
   //=============================================================================================//
   // #User
 
@@ -570,6 +569,21 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     });
   }
 
+  findUniqComboProducts(id: string) {
+    return this.combo.findUnique({
+      where: {
+        id,
+      },select:{
+        Product:{
+          select:{
+            id:true,
+            minCombo:true,
+          }
+        }
+      }
+    });
+  }
+
   updateCombo(id: string, data: UpdateComboDto) {
     return this.combo.update({
       data,
@@ -588,7 +602,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   }
 
   //   //=============================================================================================//
-  //   // #Combo
+  //   // #Item
 
   async existItemId(id: string) {
     // if (id.length < 24 || id.length > 24) {
@@ -602,6 +616,19 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       }))
     ) {
       throw new BadRequestException('O item com o id solicitado não existe');
+    }
+  }
+
+  async existNewItem(data: CreateItemDto) {
+    if (
+      await this.item.count({
+        where: {
+          productId: data.productId,
+          
+        },
+      })
+    ) {
+      return ;
     }
   }
 
@@ -643,121 +670,64 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   //   //=============================================================================================//
   //   // #Cart
 
-  async existCartId(id: string, userId: string) {
-    if (
-      id.length < 24 ||
-      id.length > 24 ||
-      userId.length < 24 ||
-      userId.length > 24
-    ) {
-      throw new BadRequestException(
-        'Problema com o id solicitado, não existe?',
-      );
-    }
-    if (
-      !(await this.user.count({
-        where: {
-          id: userId,
-          Cart: {
-            id: id,
+  async cartConnectComboId(userId: string, id: string) {
+    return this.cart.update({
+      data: {
+        Combo: {
+          connect: {
+            id,
           },
         },
-      }))
-    ) {
-      throw new BadRequestException('O Carrinho solicitado não existe');
-    }
-  }
-
-  async existGoCartId(userId: string, id: string) {
-    const product = await this.product.count({
+      },
       where: {
-        id,
+        userId,
       },
     });
-    if (product) {
-      return this.cart.update({
-        data: {
-          Product: {
-            connect: { id },
-          },
-        },
-        where: {
-          userId,
-        },
-      });
-    } else {
-      const combo = await this.combo.count({
-        where: {
-          id,
-        },
-      });
-
-      if (combo) {
-        return this.cart.update({
-          data: {
-            Combo: {
-              connect: {
-                id,
-              },
-            },
-          },
-          where: {
-            userId,
-          },
-        });
-      } else {
-        throw new BadGatewayException(
-          'Ops, parece que ocorreu um erro ao tentar adicionar o produto ao carrinho, atualize a página ou tente novamente mais tarde',
-        );
-      }
-    }
   }
 
-  async existExitCartId(userId: string, id: string) {
-    const product = await this.product.count({
+  async cartConnectProductId(userId: string, id: string) {
+    return this.cart.update({
+      data: {
+        Product: {
+          connect: {
+            id,
+          },
+        },
+      },
       where: {
-        id,
+        userId,
       },
     });
-    if (product) {
-      return this.cart.update({
-        data: {
-          Product: {
-            disconnect: {
-              id,
-            },
-          },
-        },
-        where: {
-          userId,
-        },
-      });
-    } else {
-      const combo = await this.combo.count({
-        where: {
-          id,
-        },
-      });
+  }
 
-      if (combo) {
-        return this.cart.update({
-          data: {
-            Combo: {
-              disconnect: {
-                id,
-              },
-            },
+  async cartDisconnectComboId(userId: string, id: string) {
+    return this.cart.update({
+      data: {
+        Combo: {
+          disconnect: {
+            id,
           },
-          where: {
-            userId,
+        },
+      },
+      where: {
+        userId,
+      },
+    });
+  }
+
+  async cartDisconnectProductId(userId: string, id: string) {
+    return this.cart.update({
+      data: {
+        Product: {
+          disconnect: {
+            id,
           },
-        });
-      } else {
-        throw new BadGatewayException(
-          'Ops, parece que ocorreu um erro ao tentar adicionar o produto ao carrinho, atualize a página ou tente novamente mais tarde',
-        );
-      }
-    }
+        },
+      },
+      where: {
+        userId,
+      },
+    });
   }
 
   createCart(data: CreateCartDto) {
