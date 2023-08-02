@@ -14,6 +14,11 @@ export class CartController {
     return this.cartService.connectProduct(param,userId)
   }
 
+  @Post('products')
+  allProducts(@UserAuth('userId') userId: string){
+    return this.cartService.allProducts(userId)
+  }
+
   @Get()
   findAll() {
     return this.cartService.findAll();

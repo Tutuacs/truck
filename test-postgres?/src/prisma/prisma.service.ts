@@ -619,17 +619,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     }
   }
 
-  async existNewItem(data: CreateItemDto) {
-    if (
-      await this.item.count({
+  async existItemProductId(id: string) {
+  return this.item.count({
         where: {
-          productId: data.productId,
-          
+          productId: id,
         },
-      })
-    ) {
-      return ;
-    }
+      });
   }
 
   createItem(data: CreateItemDto) {
@@ -733,6 +728,23 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   createCart(data: CreateCartDto) {
     return this.cart.create({
       data,
+    });
+  }
+
+  cartAllProducts(userId: string) {
+    return this.cart.findUnique({
+      where: {
+        userId,
+      },
+      select: {
+        Product: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+          },
+        }
+      },
     });
   }
 

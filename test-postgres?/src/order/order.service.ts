@@ -10,6 +10,7 @@ export class OrderService {
   constructor(private readonly prisma: PrismaService) { }
 
   async create(data: CreateOrderDto) {
+    await this.prisma.existProductId(data.productId);
     return data;
   }
 

@@ -36,6 +36,10 @@ export class CartService {
     }
   }
 
+  allProducts(userId: string) {
+    return this.prisma.cartAllProducts(userId);
+  }
+
   findAll() {
     return this.prisma.findAllCarts();
   }
