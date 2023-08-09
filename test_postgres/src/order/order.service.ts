@@ -1,22 +1,20 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './Validation/create-order.dto';
 import { UpdateOrderDto } from './Validation/update-order.dto';
-import { CreateItemDto } from 'src/item/Validation/create-item.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class OrderService {
-
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(data: CreateOrderDto) {
-    await this.prisma.existProductId(data.productId);
+    data.products.forEach((item) => {
+      this.prisma.existProductId(item.id);
+    });
     return data;
   }
 
-  async verifyprice(){
-    
-  }
+  async verifyprice() {}
 
   findAll() {
     return `This action returns all order`;
