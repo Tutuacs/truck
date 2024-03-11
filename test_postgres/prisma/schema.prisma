@@ -10,6 +10,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Profile {
+  id       String  @id @default(uuid())
+  email    String  @unique
+  password String
+  role     Int     @default(1)
+  image    String?
+  User     User?   @relation(fields: [userId], references: [id])
+  userId   String  @unique
+}
+
 model User {
   id            String   @id @default(uuid())
   name          String?
@@ -24,22 +34,12 @@ model User {
   Order         Order[]
 }
 
-model Profile {
-  id       String  @id @default(uuid())
-  email    String  @unique
-  password String
-  role     Int     @default(1)
-  image    String?
-  User     User?   @relation(fields: [userId], references: [id])
-  userId   String  @unique
-}
-
 model Cart {
-  id      String    @id @default(uuid())
-  // itemId  Item[]
-  User    User?     @relation(fields: [userId], references: [id])
-  userId  String?   @unique
-  SubItem SubItem[]
+  id     String  @id @default(uuid())
+  Item   Item[]
+  Combo  Combo[]
+  User   User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String  @unique
 }
 
 model Truck {
@@ -56,60 +56,60 @@ model Truck {
 }
 
 model Product {
-  id             String    @id @unique @default(uuid())
-  name           String
-  description    String?
-  image          String?
-  price          Float
-  Brands         Brands?   @relation(fields: [brandsId], references: [id])
-  brandsId       String?
-  Truck          Truck[]
-  promotion      Boolean   @default(false)
+  id          String     @id @unique @default(uuid())
+  name        String
+  description String?
+  image       String?
+  price       Float
+  color       String?
+  Types       Types[]
+  Brands      Brands?    @relation(fields: [brandsId], references: [id])
+  brandsId    String?
+  Truck       Truck[]
+  promotion   Boolean    @default(false)
+  comboId     String?
+  Item        Item[]
+  Promotion   Promotion? @relation(fields: [promotionId], references: [id])
+  promotionId String?
+}
+
+model Types {
+  id    String  @id @default(uuid())
+  color String?
+  image String?
+  Product   Product? @relation(fields: [productId], references: [id])
+  productId String?
+}
+
+model Promotion {
+  id             String    @id @default(uuid())
+  Item           Product[]
   promotionFrom  DateTime?
   promotionTo    DateTime?
   promotionPrice Float?
   minPromotion   Int?      @default(1)
-  comboId        String?
-  minCombo       Int?      @default(1)
-  Combo          Combo?    @relation(fields: [comboId], references: [id])
-  Item           Item[]
 }
 
 model Combo {
-  id      String    @id @default(uuid())
-  Product Product[]
-  Item    Item[]
+  id   String @id @default(uuid())
+  Item Item[]
+  Cart Cart[]
 }
 
 model Item {
-  id        String   @id @default(uuid())
-  quantity  Int      @default(1)
-  price     Float?
-  comboId   String?
-  Combo     Combo?   @relation(fields: [comboId], references: [id])
-  productId String?
-  Product   Product? @relation(fields: [productId], references: [id])
-  Order     Order[]
-  // Cart      Cart?    @relation(fields: [cartId], references: [id])
-  // cartId    String?
-}
-
-model SubItem {
-  id           String  @id @default(uuid())
-  quantity     Int     @default(1)
-  minCombo     Int?    @default(1)
-  minPromotion Int?    @default(1)
-  combo        Boolean @default(false)
-  comboId      String?
-  Cart         Cart?   @relation(fields: [cartId], references: [id])
-  cartId       String?
-}
-
-model Order {
-  id     String @id @default(uuid())
-  Item   Item[]
-  User   User   @relation(fields: [userId], references: [id])
-  userId String
+  id             String  @id @default(uuid())
+  quantity       Int     @default(1)
+  price          Float
+  minCombo       Int?    @default(1)
+  maxCombo       Int?    @default(1)
+  applyPromotion Boolean @default(false)
+  Product        Product @relation(fields: [productId], references: [id])
+  productId      String
+  Cart           Cart[]
+  Order          Order?  @relation(fields: [orderId], references: [id])
+  orderId        String?
+  Combo          Combo?  @relation(fields: [comboId], references: [id])
+  comboId        String?
 }
 
 model Brands {
@@ -118,108 +118,9 @@ model Brands {
   product Product[]
 }
 
-// model User {
-//   id            String   @id @default(auto()) @map("_id") @db.ObjectId
-//   name          String?
-//   email         String?
-//   cpf           String?
-//   profile       Profile?
-//   company       Boolean  @default(false)
-//   cnpj          String?
-//   verifiedEmail Boolean  @default(false)
-//   trucksId      String[] @db.ObjectId
-//   Trucks        Truck[]  @relation(fields: [trucksId], references: [id])
-//   Cart          Cart?
-//   Order         Order[]
-// }
-
-// model Profile {
-//   id       String  @id @default(auto()) @map("_id") @db.ObjectId
-//   email    String  @unique
-//   password String
-//   role     Int     @default(1)
-//   image    String?
-//   User     User?   @relation(fields: [userId], references: [id])
-//   userId   String  @unique @db.ObjectId
-// }
-
-// model Cart {
-//   id        String    @id @default(auto()) @map("_id") @db.ObjectId
-//   Product   Product[] @relation(fields: [productId], references: [id])
-//   productId String[]  @db.ObjectId
-//   User      User?     @relation(fields: [userId], references: [id])
-//   userId    String?   @unique @db.ObjectId
-//   Combo     Combo[]   @relation(fields: [comboId], references: [id])
-//   comboId   String[]  @db.ObjectId
-// }
-
-// model Truck {
-//   id         String    @id @default(auto()) @map("_id") @db.ObjectId
-//   image      String?
-//   pound      Int       @default(0)
-//   brand      String
-//   modelImage String?
-//   year       String?
-//   capacity   String?
-//   engine     String?
-//   User       User[]    @relation(fields: [userId], references: [id])
-//   userId     String[]  @db.ObjectId
-//   Product    Product[] @relation(fields: [productId], references: [id])
-//   productId  String[]  @db.ObjectId
-// }
-
-// model Product {
-//   id             String    @id @default(auto()) @map("_id") @db.ObjectId
-//   name           String
-//   description    String?
-//   image          String?
-//   price          Float
-//   Brands         Brands?   @relation(fields: [brandsId], references: [id])
-//   brandsId       String?   @db.ObjectId
-//   Truck          Truck[]   @relation(fields: [truckId], references: [id])
-//   truckId        String[]  @db.ObjectId
-//   promotion      Boolean   @default(false)
-//   promotionFrom  DateTime?
-//   promotionTo    DateTime?
-//   promotionPrice Float?
-//   minPromotion   Int?      @default(1)
-//   comboId        String?   @db.ObjectId
-//   minCombo       Int?      @default(1)
-//   Combo          Combo?    @relation(fields: [comboId], references: [id])
-//   Cart           Cart[]    @relation(fields: [cartId], references: [id])
-//   cartId         String[]  @db.ObjectId
-//   Item           Item[]
-// }
-
-// model Combo {
-//   id      String    @id @default(auto()) @map("_id") @db.ObjectId
-//   Product Product[]
-//   Cart    Cart[]    @relation(fields: [cartId], references: [id])
-//   cartId  String[]  @db.ObjectId
-//   Item    Item[]
-// }
-
-// model Item {
-//   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-//   quantity  Int      @default(1)
-//   comboId   String?  @db.ObjectId
-//   Combo     Combo?   @relation(fields: [comboId], references: [id])
-//   productId String?  @db.ObjectId
-//   Product   Product? @relation(fields: [productId], references: [id])
-//   Order     Order[]  @relation(fields: [orderId], references: [id])
-//   orderId   String[] @db.ObjectId
-// }
-
-// model Order {
-//   id     String   @id @default(auto()) @map("_id") @db.ObjectId
-//   Item   Item[]   @relation(fields: [itemId], references: [id])
-//   itemId String[] @db.ObjectId
-//   User   User     @relation(fields: [userId], references: [id])
-//   userId String   @db.ObjectId
-// }
-
-// model Brands {
-//   id      String    @id @default(auto()) @map("_id") @db.ObjectId
-//   name    String?
-//   product Product[]
-// }
+model Order {
+  id     String @id @default(uuid())
+  Item   Item[]
+  User   User   @relation(fields: [userId], references: [id])
+  userId String
+}
