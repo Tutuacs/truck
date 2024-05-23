@@ -88,7 +88,6 @@ model Promotion {
   id               String             @id @default(uuid())
   promotionFrom    DateTime?
   promotionTo      DateTime?
-  minPromotion     Int?               @default(1)
   PromotionProduct PromotionProduct[]
 }
 
