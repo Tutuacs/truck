@@ -24,7 +24,7 @@ model User {
   id            String   @id @default(uuid())
   name          String?
   email         String?
-  doc           String?
+  document      String?
   profile       Profile?
   verifiedEmail Boolean  @default(false)
   Trucks        Truck[]
@@ -93,10 +93,10 @@ model Promotion {
 }
 
 model Combo {
-  id   String @id @default(uuid())
-  name String
+  id    String @id @default(uuid())
+  name  String
   total Float
-  Item Item[]
+  Item  Item[]
 }
 
 model Item {
