@@ -40,19 +40,19 @@ model Cart {
 }
 
 model Truck {
-  id         String    @id @default(uuid())
-  image      String?
-  pound      Int       @default(0)
-  brand      String
-  modelImage String?
-  year       String?
-  capacity   String?
-  engine     String?
-  from       Truck?    @relation("TruckToTruck", fields: [fromId], references: [id])
-  fromId     String?
-  subTruck   Truck[]   @relation("TruckToTruck")
-  User       User[]
-  Product    Product[]
+  id       String    @id @default(uuid())
+  name     String    @unique
+  image    String?
+  pound    Int       @default(0)
+  brand    String
+  year     String?
+  capacity String?
+  engine   String?
+  from     Truck?    @relation("TruckToTruck", fields: [fromId], references: [id])
+  fromId   String?
+  subTruck Truck[]   @relation("TruckToTruck")
+  User     User[]
+  Product  Product[]
 }
 
 model Product {
@@ -60,6 +60,7 @@ model Product {
   name             String
   description      String?
   image            String?
+  active           Boolean            @default(true)
   price            Float
   color            String?
   RelatedWith      Product[]          @relation("ProductToProduct")
@@ -72,6 +73,7 @@ model Product {
   PromotionProduct PromotionProduct[]
   Cart             Cart[]
   Item             Item[]
+  OrderItems       OrderItems[]
 }
 
 model PromotionProduct {
@@ -92,15 +94,13 @@ model Promotion {
 }
 
 model Combo {
-  id    String @id @default(uuid())
-  name  String
-  total Float
-  Item  Item[]
+  id   String @id @default(uuid())
+  name String @unique
+  Item Item[]
 }
 
 model Item {
   id        String  @id @default(uuid())
-  quantity  Int     @default(1)
   price     Float
   minCombo  Int?    @default(1)
   maxCombo  Int?    @default(1)
@@ -112,17 +112,28 @@ model Item {
 
 model Brands {
   id      String    @id @default(uuid())
-  name    String?
+  name    String    @unique
   product Product[]
 }
 
 model Order {
-  id      String   @id @default(uuid())
-  total   Float
-  date    DateTime
-  status  Int      @default(0)
-  imageId String?
-  Items   Json[]
-  User    User     @relation(fields: [userId], references: [id])
-  userId  String
+  id         String       @id @default(uuid())
+  total      Float
+  date       DateTime     @default(now())
+  status     Int          @default(0)
+  imageId    String?
+  OrderItems OrderItems[]
+  User       User         @relation(fields: [userId], references: [id])
+  userId     String
+}
+
+model OrderItems {
+  id        String  @id @default(uuid())
+  quantity  Int
+  price     Float
+  active    Boolean @default(true)
+  Product   Product @relation(fields: [productId], references: [id])
+  productId String
+  Order     Order?  @relation(fields: [orderId], references: [id])
+  orderId   String?
 }
