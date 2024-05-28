@@ -2,13 +2,11 @@ import { Injectable } from "@nestjs/common";
 import { BrandAbstract } from "./brand-abstract";
 import { CreateBrandDto } from "../dto/create-brand.dto";
 import { Brands } from "@prisma/client";
-import { PrismaService } from "src/prisma/prisma.service";
 import { UpdateBrandDto } from "../dto/update-brand.dto";
+import { BrandVerify } from "./brand-exist.filter";
 
 @Injectable()
-export class BrandFunctions implements BrandAbstract {
-
-    constructor(private readonly prisma: PrismaService) {}
+export class BrandFunctions extends BrandVerify implements BrandAbstract {
 
     createBrand(data: CreateBrandDto): Promise<Brands> {
         return this.prisma.brands.create({data});

@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { OrderItemVerify } from "./order-items-exist.filter";
+import { OrderItemsVerify } from "./order-items-exist.filter";
 import { OrderItemsAbstract } from "./order-items-abstract";
 import { CreateOrderItemDto } from "../dto/create-order-item.dto";
 import { OrderItems } from "@prisma/client";
 import { UpdateOrderItemDto } from "../dto/update-order-item.dto";
 
 @Injectable()
-export class OrderItemFunction extends OrderItemVerify implements OrderItemsAbstract {
+export class OrderItemsFunction extends OrderItemsVerify implements OrderItemsAbstract {
     async createOrderItem(data: CreateOrderItemDto): Promise<OrderItems> {
         return await this.prisma.orderItems.create({
             data,

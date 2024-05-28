@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
-import { BrandFunctions } from './functions/brand.filter';
+import { BrandAbstract } from './functions/brand-abstract';
 
 @Injectable()
 export class BrandService {
 
-  constructor(private readonly brandFunctions: BrandFunctions) { }
+  constructor(private readonly brandFunctions: BrandAbstract) { }
 
   create(data: CreateBrandDto) {
     return this.brandFunctions.createBrand(data);

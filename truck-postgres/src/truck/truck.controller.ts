@@ -22,6 +22,11 @@ export class TruckController {
     return this.truckService.findOne(id);
   }
 
+  @Get('user')
+  listByUserId() {
+    return this.truckService.listByUserId("userId");
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateTruckDto: UpdateTruckDto) {
     return this.truckService.update(id, updateTruckDto);

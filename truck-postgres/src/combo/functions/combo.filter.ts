@@ -8,9 +8,6 @@ import { UpdateComboDto } from "../dto/update-combo.dto";
 
 @Injectable()
 export class ComboFunctions extends ComboVerify implements ComboAbstract {
-    constructor(prisma: PrismaService) {
-        super(prisma);
-    }
 
     createCombo(data: CreateComboDto): Promise<Combo> {
         return this.prisma.combo.create({

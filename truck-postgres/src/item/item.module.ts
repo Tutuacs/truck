@@ -9,9 +9,13 @@ import { ItemFunctions } from './functions/item.filter';
 @Module({
   imports: [PrismaModule],
   controllers: [ItemController],
-  providers: [ItemService, PrismaService, {
-    provide: ItemAbstract,
-    useClass: ItemFunctions,
-  }],
+  providers: [
+    ItemService,
+    PrismaService,
+    {
+      provide: ItemAbstract,
+      useClass: ItemFunctions,
+    },
+  ],
 })
 export class ItemModule {}

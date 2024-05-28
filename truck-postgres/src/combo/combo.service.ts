@@ -2,11 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { CreateComboDto } from './dto/create-combo.dto';
 import { UpdateComboDto } from './dto/update-combo.dto';
 import { ComboFunctions } from './functions/combo.filter';
+import { ComboAbstract } from './functions/combo-abstract';
 
 @Injectable()
 export class ComboService {
 
-  constructor(private readonly comboFunctions: ComboFunctions) {}
+  constructor(private readonly comboFunctions: ComboAbstract) {}
 
   create(data: CreateComboDto) {
     return this.comboFunctions.createCombo(data);

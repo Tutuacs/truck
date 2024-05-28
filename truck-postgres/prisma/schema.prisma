@@ -78,30 +78,33 @@ model Product {
 
 model PromotionProduct {
   id          String     @id @default(uuid())
-  Product     Product?   @relation(fields: [productId], references: [id])
+  price       Float
   active      Boolean    @default(false)
+  Product     Product?   @relation(fields: [productId], references: [id])
+  productId   String?
   Promotion   Promotion? @relation(fields: [promotionId], references: [id])
   promotionId String?
-  price       Float
-  productId   String?
 }
 
 model Promotion {
   id               String             @id @default(uuid())
+  name             String             @unique
   promotionFrom    DateTime?
   promotionTo      DateTime?
   PromotionProduct PromotionProduct[]
 }
 
 model Combo {
-  id   String @id @default(uuid())
-  name String @unique
-  Item Item[]
+  id     String  @id @default(uuid())
+  name   String  @unique
+  active Boolean @default(true)
+  Item   Item[]
 }
 
 model Item {
   id        String  @id @default(uuid())
   price     Float
+  active    Boolean @default(true)
   minCombo  Int?    @default(1)
   maxCombo  Int?    @default(1)
   Product   Product @relation(fields: [productId], references: [id])

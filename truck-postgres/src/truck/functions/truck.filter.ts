@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { TruckAbstract } from './truck-abstract';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { Truck } from '@prisma/client';
 import { CreateTruckDto } from '../dto/create-truck.dto';
 import { UpdateTruckDto } from '../dto/update-truck.dto';
@@ -8,10 +7,6 @@ import { TruckVerify } from './truck-exist.filter';
 
 @Injectable()
 export class TruckFunctions extends TruckVerify implements TruckAbstract {
-  constructor(prisma: PrismaService) {
-    super(prisma);
-  }
-
   createTruck(data: CreateTruckDto): Promise<Truck> {
     return this.prisma.truck.create({
       data,
@@ -28,6 +23,17 @@ export class TruckFunctions extends TruckVerify implements TruckAbstract {
 
   listTruck(): Promise<Truck[]> {
     return this.prisma.truck.findMany();
+  }
+
+  listByUserId(id: string) {
+    return this.prisma.user.findFirst({
+      where: {
+        id,
+      },
+      select:{
+        Trucks:true
+      }
+    });
   }
 
   grupTruckBrand() {
@@ -55,5 +61,4 @@ export class TruckFunctions extends TruckVerify implements TruckAbstract {
       },
     });
   }
-  
 }

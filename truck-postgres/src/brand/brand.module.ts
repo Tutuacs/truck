@@ -11,7 +11,6 @@ import { BrandFunctions } from './functions/brand.filter';
   controllers: [BrandController],
   providers: [
     BrandService,
-    PrismaService,
     {
       provide: BrandAbstract,
       useClass: BrandFunctions,

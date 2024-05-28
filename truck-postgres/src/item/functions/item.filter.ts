@@ -2,16 +2,11 @@ import { Injectable } from "@nestjs/common";
 import { ItemAbstract } from "./item-abstract";
 import { CreateItemDto } from "../dto/create-item.dto";
 import { Item } from "@prisma/client";
-import { PrismaService } from "src/prisma/prisma.service";
 import { UpdateItemDto } from "../dto/update-item.dto";
 import { ItemVerify } from "./item-exist.filter";
 
 @Injectable()
 export class ItemFunctions extends ItemVerify implements ItemAbstract {
-
-    constructor(prisma: PrismaService) {
-        super(prisma);
-    }
 
     createItem(data: CreateItemDto): Promise<Item> {
         return this.prisma.item.create({

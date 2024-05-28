@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
-import { ItemFunctions } from './functions/item.filter';
+import { ItemAbstract } from './functions/item-abstract';
 
 @Injectable()
 export class ItemService {
 
-  constructor(private readonly itemFunctions: ItemFunctions) { }
+  constructor(private readonly itemFunctions: ItemAbstract) { }
 
   create(data: CreateItemDto) {
     return this.itemFunctions.createItem(data);
@@ -17,7 +17,7 @@ export class ItemService {
   }
 
   async findOne(id: string) {
-    await this.itemFunctions.existId(id);
+    await this.itemFunctions.exItemId(id);
     return this.itemFunctions.findItem(id);
   }
 

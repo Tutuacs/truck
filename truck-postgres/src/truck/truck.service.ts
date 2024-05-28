@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTruckDto } from './dto/create-truck.dto';
 import { UpdateTruckDto } from './dto/update-truck.dto';
-import { TruckFunctions } from './functions/truck.filter';
+import { TruckAbstract } from './functions/truck-abstract';
 
 @Injectable()
 export class TruckService {
-
-  constructor(private readonly truckFunctions: TruckFunctions) { }
+  constructor(private readonly truckFunctions: TruckAbstract) {}
 
   create(data: CreateTruckDto) {
     return this.truckFunctions.createTruck(data);
@@ -18,6 +17,10 @@ export class TruckService {
 
   findOne(id: string) {
     return this.truckFunctions.listTruck();
+  }
+
+  listByUserId(id: string) {
+    return this.truckFunctions.listByUserId(id);
   }
 
   update(id: string, data: UpdateTruckDto) {

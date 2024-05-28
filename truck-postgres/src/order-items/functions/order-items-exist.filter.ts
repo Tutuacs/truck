@@ -1,6 +1,6 @@
 import { PrismaService } from 'src/prisma/prisma.service';
 
-export class OrderItemVerify {
+export class OrderItemsVerify {
   constructor(protected readonly prisma: PrismaService) {}
 
   async orderItemExist(id: string): Promise<boolean> {

@@ -1,6 +1,7 @@
 import { Prisma, Truck } from '@prisma/client';
 import { CreateTruckDto } from '../dto/create-truck.dto';
 import { DefaultArgs } from '@prisma/client/runtime/library';
+import { UpdateTruckDto } from '../dto/update-truck.dto';
 
 export abstract class TruckAbstract {
   abstract createTruck(data: CreateTruckDto): Promise<Truck>;
@@ -8,6 +9,20 @@ export abstract class TruckAbstract {
   abstract findTruck(id: string): Promise<Truck>;
 
   abstract listTruck(): Promise<Truck[]>;
+
+  abstract listByUserId(id: string): Prisma.Prisma__UserClient<{
+    Trucks: {
+        id: string;
+        name: string;
+        image: string;
+        pound: number;
+        brand: string;
+        year: string;
+        capacity: string;
+        engine: string;
+        fromId: string;
+    }[];
+}, null, DefaultArgs>;
 
   abstract grupTruckBrand(): Prisma.GetTruckGroupByPayload<{
     by: 'brand'[];
@@ -18,7 +33,7 @@ export abstract class TruckAbstract {
 
   abstract updateTruck(
     id: string,
-    data: CreateTruckDto,
+    data: UpdateTruckDto,
   ): Prisma.Prisma__TruckClient<
     {
       id: string;

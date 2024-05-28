@@ -8,4 +8,5 @@ export abstract class ItemAbstract {
     abstract listItem(): Promise<Item[]>;
     abstract updateItem(id: string, data: UpdateItemDto): Promise<Item>;
     abstract removeItem(id: string): Promise<Item>;
+    abstract exItemId(id: string): Promise<Boolean>;
 }
