@@ -17,28 +17,31 @@ const common_1 = require("@nestjs/common");
 const promotion_service_1 = require("./promotion.service");
 const create_promotion_dto_1 = require("./dto/create-promotion.dto");
 const update_promotion_dto_1 = require("./dto/update-promotion.dto");
+const guards_1 = require("../guards");
+const decorators_1 = require("../decorators");
 let PromotionController = class PromotionController {
     constructor(promotionService) {
         this.promotionService = promotionService;
     }
-    create(createPromotionDto) {
-        return this.promotionService.create(createPromotionDto);
+    create(data) {
+        return this.promotionService.create(data);
     }
     findAll() {
         return this.promotionService.findAll();
     }
     findOne(id) {
-        return this.promotionService.findOne(+id);
+        return this.promotionService.findOne(id);
     }
-    update(id, updatePromotionDto) {
-        return this.promotionService.update(+id, updatePromotionDto);
+    update(id, data) {
+        return this.promotionService.update(id, data);
     }
     remove(id) {
-        return this.promotionService.remove(+id);
+        return this.promotionService.remove(id);
     }
 };
 exports.PromotionController = PromotionController;
 __decorate([
+    (0, decorators_1.Acess)(decorators_1.Role.Admin),
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -59,6 +62,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], PromotionController.prototype, "findOne", null);
 __decorate([
+    (0, decorators_1.Acess)(decorators_1.Role.Admin),
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
@@ -67,6 +71,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], PromotionController.prototype, "update", null);
 __decorate([
+    (0, decorators_1.Acess)(decorators_1.Role.Admin),
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -74,6 +79,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], PromotionController.prototype, "remove", null);
 exports.PromotionController = PromotionController = __decorate([
+    (0, common_1.UseGuards)(guards_1.AuthGuard, guards_1.RoleGuard),
     (0, common_1.Controller)('promotion'),
     __metadata("design:paramtypes", [promotion_service_1.PromotionService])
 ], PromotionController);

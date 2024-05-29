@@ -17,28 +17,38 @@ const common_1 = require("@nestjs/common");
 const product_service_1 = require("./product.service");
 const create_product_dto_1 = require("./dto/create-product.dto");
 const update_product_dto_1 = require("./dto/update-product.dto");
+const add_truck_dto_1 = require("../truck/dto/add-truck.dto");
+const decorators_1 = require("../decorators");
+const guards_1 = require("../guards");
 let ProductController = class ProductController {
     constructor(productService) {
         this.productService = productService;
     }
-    create(createProductDto) {
-        return this.productService.create(createProductDto);
+    create(data) {
+        return this.productService.create(data);
     }
     findAll() {
         return this.productService.findAll();
     }
     findOne(id) {
-        return this.productService.findOne(+id);
+        return this.productService.findOne(id);
     }
-    update(id, updateProductDto) {
-        return this.productService.update(+id, updateProductDto);
+    linkTruck(trucks, id) {
+        return this.productService.linkTruck(trucks, id);
+    }
+    unlinkTruck(trucks, id) {
+        return this.productService.unlinkTruck(trucks, id);
+    }
+    update(id, data) {
+        return this.productService.update(id, data);
     }
     remove(id) {
-        return this.productService.remove(+id);
+        return this.productService.remove(id);
     }
 };
 exports.ProductController = ProductController;
 __decorate([
+    (0, decorators_1.Acess)(decorators_1.Role.Admin),
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -59,6 +69,25 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ProductController.prototype, "findOne", null);
 __decorate([
+    (0, decorators_1.Acess)(decorators_1.Role.Admin),
+    (0, common_1.Post)('link-truck/:id'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [add_truck_dto_1.AddTruckDto, String]),
+    __metadata("design:returntype", void 0)
+], ProductController.prototype, "linkTruck", null);
+__decorate([
+    (0, decorators_1.Acess)(decorators_1.Role.Admin),
+    (0, common_1.Post)('unlink-truck/:id'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [add_truck_dto_1.AddTruckDto, String]),
+    __metadata("design:returntype", void 0)
+], ProductController.prototype, "unlinkTruck", null);
+__decorate([
+    (0, decorators_1.Acess)(decorators_1.Role.Admin),
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
@@ -67,6 +96,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ProductController.prototype, "update", null);
 __decorate([
+    (0, decorators_1.Acess)(decorators_1.Role.Admin),
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -74,6 +104,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ProductController.prototype, "remove", null);
 exports.ProductController = ProductController = __decorate([
+    (0, common_1.UseGuards)(guards_1.AuthGuard, guards_1.RoleGuard),
     (0, common_1.Controller)('product'),
     __metadata("design:paramtypes", [product_service_1.ProductService])
 ], ProductController);

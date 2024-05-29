@@ -9,4 +9,5 @@ export declare abstract class AuthAbstract {
         email: string;
         role: number;
     }>;
+    abstract findProfile(id: string): Promise<Profile>;
 }

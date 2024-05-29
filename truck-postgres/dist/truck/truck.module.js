@@ -13,12 +13,13 @@ const truck_controller_1 = require("./truck.controller");
 const truck_filter_1 = require("./functions/truck.filter");
 const truck_abstract_1 = require("./functions/truck-abstract");
 const prisma_module_1 = require("../prisma/prisma.module");
+const auth_module_1 = require("../auth/auth.module");
 let TruckModule = class TruckModule {
 };
 exports.TruckModule = TruckModule;
 exports.TruckModule = TruckModule = __decorate([
     (0, common_1.Module)({
-        imports: [prisma_module_1.PrismaModule],
+        imports: [prisma_module_1.PrismaModule, auth_module_1.AuthModule],
         controllers: [truck_controller_1.TruckController],
         providers: [
             truck_service_1.TruckService,

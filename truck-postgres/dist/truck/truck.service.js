@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TruckService = void 0;
 const common_1 = require("@nestjs/common");
 const truck_abstract_1 = require("./functions/truck-abstract");
+const decorators_1 = require("../decorators");
 let TruckService = class TruckService {
     constructor(truckFunctions) {
         this.truckFunctions = truckFunctions;
@@ -25,8 +26,17 @@ let TruckService = class TruckService {
     findOne(id) {
         return this.truckFunctions.listTruck();
     }
-    listByUserId(id) {
+    listByUserId(id, user) {
+        if (user.role != decorators_1.Role.Admin && user.id != id) {
+            throw new common_1.UnauthorizedException("Seu usuário não pode visualizar os caminhões de outro usuário.");
+        }
         return this.truckFunctions.listByUserId(id);
+    }
+    linkTruck(data, user) {
+        return this.truckFunctions.linkTruck(data, user);
+    }
+    unlinkTruck(data, user) {
+        return this.truckFunctions.unlinkTruck(data, user);
     }
     update(id, data) {
         return this.truckFunctions.updateTruck(id, data);

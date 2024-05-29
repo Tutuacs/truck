@@ -17,6 +17,8 @@ const common_1 = require("@nestjs/common");
 const brand_service_1 = require("./brand.service");
 const create_brand_dto_1 = require("./dto/create-brand.dto");
 const update_brand_dto_1 = require("./dto/update-brand.dto");
+const guards_1 = require("../guards");
+const decorators_1 = require("../decorators");
 let BrandController = class BrandController {
     constructor(brandService) {
         this.brandService = brandService;
@@ -39,6 +41,7 @@ let BrandController = class BrandController {
 };
 exports.BrandController = BrandController;
 __decorate([
+    (0, decorators_1.Acess)(decorators_1.Role.Admin),
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -59,6 +62,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], BrandController.prototype, "findOne", null);
 __decorate([
+    (0, decorators_1.Acess)(decorators_1.Role.Admin),
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
@@ -67,6 +71,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], BrandController.prototype, "update", null);
 __decorate([
+    (0, decorators_1.Acess)(decorators_1.Role.Admin),
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -74,6 +79,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], BrandController.prototype, "remove", null);
 exports.BrandController = BrandController = __decorate([
+    (0, common_1.UseGuards)(guards_1.AuthGuard, guards_1.RoleGuard),
     (0, common_1.Controller)('brand'),
     __metadata("design:paramtypes", [brand_service_1.BrandService])
 ], BrandController);

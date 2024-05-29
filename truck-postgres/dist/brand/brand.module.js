@@ -13,12 +13,13 @@ const brand_controller_1 = require("./brand.controller");
 const prisma_module_1 = require("../prisma/prisma.module");
 const brand_abstract_1 = require("./functions/brand-abstract");
 const brand_filter_1 = require("./functions/brand.filter");
+const auth_module_1 = require("../auth/auth.module");
 let BrandModule = class BrandModule {
 };
 exports.BrandModule = BrandModule;
 exports.BrandModule = BrandModule = __decorate([
     (0, common_1.Module)({
-        imports: [prisma_module_1.PrismaModule],
+        imports: [prisma_module_1.PrismaModule, auth_module_1.AuthModule],
         controllers: [brand_controller_1.BrandController],
         providers: [
             brand_service_1.BrandService,

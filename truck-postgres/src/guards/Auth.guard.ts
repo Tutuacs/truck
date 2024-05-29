@@ -1,14 +1,12 @@
-import { CanActivate, Injectable, ExecutionContext } from '@nestjs/common';
+import { CanActivate, Injectable, ExecutionContext, Inject } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { ProfileFunctions } from 'src/profile/functions/profile.filter';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly authService: AuthService,
-    private readonly profileFunctions: ProfileFunctions,
-  ) {}
+  ) {
+  }
 
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
@@ -21,7 +19,7 @@ export class AuthGuard implements CanActivate {
 
       request.token = data;
 
-      request.profile = await this.profileFunctions.createProfile(data.id);
+      request.profile = await this.authService.findProfile(data.id);
 
       return true;
     } catch {

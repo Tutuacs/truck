@@ -15,6 +15,10 @@ export class AuthService {
     private readonly jwt: JwtService,
   ) {}
 
+  async findProfile(id: string) {
+    return this.authFunctions.findProfile(id);
+  }
+
   async login(login: LoginDto) {
     const user = await this.authFunctions.login(login);
     return this.createToken(user);

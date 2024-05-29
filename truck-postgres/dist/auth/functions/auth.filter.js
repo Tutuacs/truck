@@ -19,6 +19,9 @@ class AuthFunctions extends auth_exist_filter_1.AuthVerify {
         data.userId = user.id;
         return this.profile.createProfile(data);
     }
+    async findProfile(id) {
+        return this.profile.findProfile(id);
+    }
     async login(data) {
         const user = await this.prisma.profile.findUnique({
             where: {

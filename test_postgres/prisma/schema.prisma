@@ -35,11 +35,11 @@ model User {
 }
 
 model Cart {
-  id     String  @id @default(uuid())
-  Item   Item[]
-  Combo  Combo[]
-  User   User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String  @unique
+  id      String    @id @default(uuid())
+  Product Product[]
+  Combo   Combo[]
+  User    User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId  String    @unique
 }
 
 model Truck {
@@ -67,16 +67,17 @@ model Product {
   brandsId    String?
   Truck       Truck[]
   promotion   Boolean    @default(false)
-  comboId     String?
   Item        Item[]
   Promotion   Promotion? @relation(fields: [promotionId], references: [id])
   promotionId String?
+  Cart        Cart?      @relation(fields: [cartId], references: [id])
+  cartId      String?
 }
 
 model Types {
-  id    String  @id @default(uuid())
-  color String?
-  image String?
+  id        String   @id @default(uuid())
+  color     String?
+  image     String?
   Product   Product? @relation(fields: [productId], references: [id])
   productId String?
 }
@@ -91,9 +92,9 @@ model Promotion {
 }
 
 model Combo {
-  id   String @id @default(uuid())
-  Item Item[]
-  Cart Cart[]
+  id        String   @id @default(uuid())
+  Product   Item[]
+  Cart      Cart[]
 }
 
 model Item {
@@ -105,7 +106,6 @@ model Item {
   applyPromotion Boolean @default(false)
   Product        Product @relation(fields: [productId], references: [id])
   productId      String
-  Cart           Cart[]
   Order          Order?  @relation(fields: [orderId], references: [id])
   orderId        String?
   Combo          Combo?  @relation(fields: [comboId], references: [id])

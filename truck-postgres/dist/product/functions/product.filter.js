@@ -25,6 +25,38 @@ let ProductFunction = class ProductFunction extends product_exist_filter_1.Produ
     removeProduct(id) {
         return this.prisma.product.delete({ where: { id } });
     }
+    async linkTruck(data, id) {
+        const product = await this.prisma.product.update({
+            where: {
+                id,
+            },
+            data: {
+                Truck: {
+                    connect: data.trucks,
+                },
+            },
+            select: {
+                Truck: true
+            }
+        });
+        return product.Truck;
+    }
+    async unlinkTruck(data, id) {
+        const product = await this.prisma.product.update({
+            where: {
+                id,
+            },
+            data: {
+                Truck: {
+                    disconnect: data.trucks
+                },
+            },
+            select: {
+                Truck: true
+            }
+        });
+        return product.Truck;
+    }
 };
 exports.ProductFunction = ProductFunction;
 exports.ProductFunction = ProductFunction = __decorate([

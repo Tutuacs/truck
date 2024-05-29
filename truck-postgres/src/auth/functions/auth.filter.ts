@@ -22,6 +22,10 @@ export class AuthFunctions extends AuthVerify implements AuthAbstract {
     return this.profile.createProfile(data);
   }
 
+  async findProfile(id: string) {
+    return this.profile.findProfile(id);
+  }
+
   async login(data: LoginDto) {
     const user = await this.prisma.profile.findUnique({
       where: {

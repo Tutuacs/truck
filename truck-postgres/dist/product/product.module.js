@@ -10,13 +10,24 @@ exports.ProductModule = void 0;
 const common_1 = require("@nestjs/common");
 const product_service_1 = require("./product.service");
 const product_controller_1 = require("./product.controller");
+const prisma_module_1 = require("../prisma/prisma.module");
+const auth_module_1 = require("../auth/auth.module");
+const product_abstract_1 = require("./functions/product-abstract");
+const product_filter_1 = require("./functions/product.filter");
 let ProductModule = class ProductModule {
 };
 exports.ProductModule = ProductModule;
 exports.ProductModule = ProductModule = __decorate([
     (0, common_1.Module)({
+        imports: [prisma_module_1.PrismaModule, auth_module_1.AuthModule],
         controllers: [product_controller_1.ProductController],
-        providers: [product_service_1.ProductService],
+        providers: [
+            product_service_1.ProductService,
+            {
+                provide: product_abstract_1.ProductAbstract,
+                useClass: product_filter_1.ProductFunction,
+            },
+        ],
     })
 ], ProductModule);
 //# sourceMappingURL=product.module.js.map

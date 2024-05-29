@@ -1,7 +1,6 @@
 import { Inject } from "@nestjs/common";
 import { CartFunctions } from "src/cart/functions/cart.filter";
 import { PrismaService } from "src/prisma/prisma.service";
-import { ProfileVerify } from "src/profile/functions/profile-exist.filter";
 import { ProfileFunctions } from "src/profile/functions/profile.filter";
 import { UserFunctions } from "src/user/functions/user.filter";
 

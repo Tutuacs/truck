@@ -7,6 +7,14 @@ export declare class AuthService {
     private issuer;
     private audience;
     constructor(authFunctions: AuthAbstract, jwt: JwtService);
+    findProfile(id: string): Promise<{
+        id: string;
+        email: string;
+        password: string;
+        role: number;
+        image: string;
+        userId: string;
+    }>;
     login(login: LoginDto): Promise<{
         token: string;
         profile: {

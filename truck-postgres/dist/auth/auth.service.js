@@ -21,6 +21,9 @@ let AuthService = class AuthService {
         this.issuer = 'truck-ecommerce-demo';
         this.audience = 'profile';
     }
+    async findProfile(id) {
+        return this.authFunctions.findProfile(id);
+    }
     async login(login) {
         const user = await this.authFunctions.login(login);
         return this.createToken(user);

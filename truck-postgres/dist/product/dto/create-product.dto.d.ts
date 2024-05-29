@@ -4,4 +4,5 @@ export declare class CreateProductDto {
     image: string;
     price: number;
     color: string;
+    brandsId: string;
 }

@@ -11,6 +11,14 @@ export declare class AuthFunctions extends AuthVerify implements AuthAbstract {
         image: string;
         userId: string;
     }>;
+    findProfile(id: string): Promise<{
+        id: string;
+        email: string;
+        password: string;
+        role: number;
+        image: string;
+        userId: string;
+    }>;
     login(data: LoginDto): Promise<{
         id: string;
         userId: string;

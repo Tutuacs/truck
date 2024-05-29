@@ -4,10 +4,17 @@ import { Truck } from '@prisma/client';
 import { CreateTruckDto } from '../dto/create-truck.dto';
 import { UpdateTruckDto } from '../dto/update-truck.dto';
 import { TruckVerify } from './truck-exist.filter';
+import { AddTruckDto } from '../dto/add-truck.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class TruckFunctions extends TruckVerify implements TruckAbstract {
+  constructor(prisma: PrismaService) {
+    super(prisma);
+  }
+
   createTruck(data: CreateTruckDto): Promise<Truck> {
+    console.log('Chegou');
     return this.prisma.truck.create({
       data,
     });
@@ -30,9 +37,9 @@ export class TruckFunctions extends TruckVerify implements TruckAbstract {
       where: {
         id,
       },
-      select:{
-        Trucks:true
-      }
+      select: {
+        Trucks: true,
+      },
     });
   }
 
@@ -60,5 +67,39 @@ export class TruckFunctions extends TruckVerify implements TruckAbstract {
         id,
       },
     });
+  }
+
+  async linkTruck(data: AddTruckDto, user: { userId: string }) {
+    const truck = await this.prisma.user.update({
+      where: {
+        id: user.userId,
+      },
+      data: {
+        Trucks: {
+          connect: data.trucks,
+        },
+      },
+      select: {
+        Trucks: true,
+      },
+    });
+    return truck.Trucks;
+  }
+
+  async unlinkTruck(data: AddTruckDto, user: { userId: string }) {
+    const truck = await this.prisma.user.update({
+      where: {
+        id: user.userId,
+      },
+      data: {
+        Trucks: {
+          disconnect: data.trucks,
+        },
+      },
+      select: {
+        Trucks: true,
+      },
+    });
+    return truck.Trucks;
   }
 }

@@ -15,9 +15,9 @@ const process_1 = require("process");
 const prisma_module_1 = require("../prisma/prisma.module");
 const auth_abstract_1 = require("./functions/auth-abstract");
 const auth_filter_1 = require("./functions/auth.filter");
-const profile_filter_1 = require("../profile/functions/profile.filter");
 const user_filter_1 = require("../user/functions/user.filter");
 const cart_filter_1 = require("../cart/functions/cart.filter");
+const profile_filter_1 = require("../profile/functions/profile.filter");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -36,7 +36,7 @@ exports.AuthModule = AuthModule = __decorate([
                 useClass: auth_filter_1.AuthFunctions,
             },
         ],
-        exports: [auth_filter_1.AuthFunctions],
+        exports: [auth_service_1.AuthService, auth_filter_1.AuthFunctions],
     })
 ], AuthModule);
 //# sourceMappingURL=auth.module.js.map

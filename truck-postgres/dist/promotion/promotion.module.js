@@ -10,13 +10,21 @@ exports.PromotionModule = void 0;
 const common_1 = require("@nestjs/common");
 const promotion_service_1 = require("./promotion.service");
 const promotion_controller_1 = require("./promotion.controller");
+const prisma_module_1 = require("../prisma/prisma.module");
+const auth_module_1 = require("../auth/auth.module");
+const promotion_abstract_1 = require("./functions/promotion-abstract");
+const promotion_filter_1 = require("./functions/promotion.filter");
 let PromotionModule = class PromotionModule {
 };
 exports.PromotionModule = PromotionModule;
 exports.PromotionModule = PromotionModule = __decorate([
     (0, common_1.Module)({
+        imports: [prisma_module_1.PrismaModule, auth_module_1.AuthModule],
         controllers: [promotion_controller_1.PromotionController],
-        providers: [promotion_service_1.PromotionService],
+        providers: [promotion_service_1.PromotionService, {
+                provide: promotion_abstract_1.PromotionAbstract,
+                useClass: promotion_filter_1.PromotionFunction,
+            }],
     })
 ], PromotionModule);
 //# sourceMappingURL=promotion.module.js.map

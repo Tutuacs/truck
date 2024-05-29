@@ -4,6 +4,7 @@ import { Injectable } from "@nestjs/common";
 import { CreateProductDto } from "../dto/create-product.dto";
 import { Product } from "@prisma/client";
 import { UpdateProductDto } from "../dto/update-product.dto";
+import { AddTruckDto } from "src/truck/dto/add-truck.dto";
 
 @Injectable()
 export class ProductFunction extends ProductVerify implements ProductAbstract {
@@ -26,4 +27,38 @@ export class ProductFunction extends ProductVerify implements ProductAbstract {
     removeProduct(id: string): Promise<Product> {
         return this.prisma.product.delete({ where: { id } });
     }
+
+    async linkTruck(data: AddTruckDto, id: string) {
+        const product = await this.prisma.product.update({
+          where: {
+            id,
+          },
+          data: {
+            Truck: {
+              connect: data.trucks,
+            },
+          },
+          select:{
+            Truck: true
+          }
+        });
+        return product.Truck
+      }
+    
+      async unlinkTruck(data: AddTruckDto, id: string) {
+        const product = await this.prisma.product.update({
+          where: {
+            id,
+          },
+          data: {
+            Truck: {
+              disconnect: data.trucks
+            },
+          },
+          select:{
+            Truck: true
+          }
+        });
+        return product.Truck
+      }
 }

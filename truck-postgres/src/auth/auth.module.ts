@@ -6,9 +6,9 @@ import { env } from 'process';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { AuthAbstract } from './functions/auth-abstract';
 import { AuthFunctions } from './functions/auth.filter';
-import { ProfileFunctions } from 'src/profile/functions/profile.filter';
 import { UserFunctions } from 'src/user/functions/user.filter';
 import { CartFunctions } from 'src/cart/functions/cart.filter';
+import { ProfileFunctions } from 'src/profile/functions/profile.filter';
 
 @Module({
   imports: [PrismaModule, JwtModule.register({ secret: env.JWT_SECRET })],
@@ -24,6 +24,6 @@ import { CartFunctions } from 'src/cart/functions/cart.filter';
       useClass: AuthFunctions,
     },
   ],
-  exports: [AuthFunctions],
+  exports: [AuthService, AuthFunctions],
 })
 export class AuthModule {}

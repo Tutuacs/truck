@@ -24,4 +24,8 @@ export class CreateProductDto {
     @IsString()
     color: string;
 
+    @IsNotEmpty()
+    @IsString()
+    brandsId: string;
+
 }

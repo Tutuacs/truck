@@ -34,16 +34,3 @@ export class CreateTruckDto {
     fromId: string;
 
 }
-
-
-// Truck = {
-//     id: string;
-//     image: string;
-//     pound: number;
-//     brand: string;
-//     modelImage: string;
-//     year: string;
-//     capacity: string;
-//     engine: string;
-//     fromId: string;
-// }
