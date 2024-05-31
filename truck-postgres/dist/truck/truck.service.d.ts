@@ -1,7 +1,7 @@
 import { CreateTruckDto } from './dto/create-truck.dto';
 import { UpdateTruckDto } from './dto/update-truck.dto';
 import { TruckAbstract } from './functions/truck-abstract';
-import { AddTruckDto } from './dto/add-truck.dto';
+import { AddRelationDto } from './dto/add-truck.dto';
 export declare class TruckService {
     private readonly truckFunctions;
     constructor(truckFunctions: TruckAbstract);
@@ -37,7 +37,7 @@ export declare class TruckService {
         capacity: string;
         engine: string;
         fromId: string;
-    }[]>;
+    }>;
     listByUserId(id: string, user: {
         role: number;
         id: string;
@@ -54,7 +54,8 @@ export declare class TruckService {
             fromId: string;
         }[];
     }, null, import("@prisma/client/runtime/library").DefaultArgs>;
-    linkTruck(data: AddTruckDto, user: {
+    groupTrucks(): Promise<import("@prisma/client").Prisma.PickEnumerable<import("@prisma/client").Prisma.TruckGroupByOutputType, "brand"[]>[]>;
+    linkTruck(data: AddRelationDto, user: {
         userId: string;
     }): Promise<{
         id: string;
@@ -67,7 +68,7 @@ export declare class TruckService {
         engine: string;
         fromId: string;
     }[]>;
-    unlinkTruck(data: AddTruckDto, user: {
+    unlinkTruck(data: AddRelationDto, user: {
         userId: string;
     }): Promise<{
         id: string;

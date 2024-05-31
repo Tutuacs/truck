@@ -2,7 +2,7 @@ import { Prisma, Truck } from '@prisma/client';
 import { CreateTruckDto } from '../dto/create-truck.dto';
 import { DefaultArgs } from '@prisma/client/runtime/library';
 import { UpdateTruckDto } from '../dto/update-truck.dto';
-import { AddTruckDto } from '../dto/add-truck.dto';
+import { AddRelationDto } from '../dto/add-truck.dto';
 export declare abstract class TruckAbstract {
     abstract createTruck(data: CreateTruckDto): Promise<Truck>;
     abstract findTruck(id: string): Promise<Truck>;
@@ -20,12 +20,7 @@ export declare abstract class TruckAbstract {
             fromId: string;
         }[];
     }, null, DefaultArgs>;
-    abstract grupTruckBrand(): Prisma.GetTruckGroupByPayload<{
-        by: 'brand'[];
-        where: {
-            fromId: null;
-        };
-    }>;
+    abstract groupTruckBrand(): Promise<(Prisma.PickEnumerable<Prisma.TruckGroupByOutputType, "brand"[]> & {})[]>;
     abstract updateTruck(id: string, data: UpdateTruckDto): Prisma.Prisma__TruckClient<{
         id: string;
         image: string;
@@ -37,10 +32,10 @@ export declare abstract class TruckAbstract {
         fromId: string;
     }, never, DefaultArgs>;
     abstract removeTruck(id: string): Promise<Truck>;
-    abstract linkTruck(data: AddTruckDto, user: {
+    abstract linkTruck(data: AddRelationDto, user: {
         userId: string;
     }): Promise<Truck[]>;
-    abstract unlinkTruck(data: AddTruckDto, user: {
+    abstract unlinkTruck(data: AddRelationDto, user: {
         userId: string;
     }): Promise<Truck[]>;
 }

@@ -3,7 +3,7 @@ import { Truck } from '@prisma/client';
 import { CreateTruckDto } from '../dto/create-truck.dto';
 import { UpdateTruckDto } from '../dto/update-truck.dto';
 import { TruckVerify } from './truck-exist.filter';
-import { AddTruckDto } from '../dto/add-truck.dto';
+import { AddRelationDto } from '../dto/add-truck.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 export declare class TruckFunctions extends TruckVerify implements TruckAbstract {
     constructor(prisma: PrismaService);
@@ -23,12 +23,7 @@ export declare class TruckFunctions extends TruckVerify implements TruckAbstract
             fromId: string;
         }[];
     }, null, import("@prisma/client/runtime/library").DefaultArgs>;
-    grupTruckBrand(): import("@prisma/client").Prisma.GetTruckGroupByPayload<{
-        by: "brand"[];
-        where: {
-            fromId: null;
-        };
-    }>;
+    groupTruckBrand(): Promise<(import("@prisma/client").Prisma.PickEnumerable<import("@prisma/client").Prisma.TruckGroupByOutputType, ("brand" | "fromId" | "id")[]> & {})[]>;
     updateTruck(id: string, data: UpdateTruckDto): import("@prisma/client").Prisma.Prisma__TruckClient<{
         id: string;
         name: string;
@@ -51,7 +46,7 @@ export declare class TruckFunctions extends TruckVerify implements TruckAbstract
         engine: string;
         fromId: string;
     }, never, import("@prisma/client/runtime/library").DefaultArgs>;
-    linkTruck(data: AddTruckDto, user: {
+    linkTruck(data: AddRelationDto, user: {
         userId: string;
     }): Promise<{
         id: string;
@@ -64,7 +59,7 @@ export declare class TruckFunctions extends TruckVerify implements TruckAbstract
         engine: string;
         fromId: string;
     }[]>;
-    unlinkTruck(data: AddTruckDto, user: {
+    unlinkTruck(data: AddRelationDto, user: {
         userId: string;
     }): Promise<{
         id: string;

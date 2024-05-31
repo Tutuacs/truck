@@ -4,7 +4,7 @@ import { Truck } from '@prisma/client';
 import { CreateTruckDto } from '../dto/create-truck.dto';
 import { UpdateTruckDto } from '../dto/update-truck.dto';
 import { TruckVerify } from './truck-exist.filter';
-import { AddTruckDto } from '../dto/add-truck.dto';
+import { AddRelationDto } from '../dto/add-truck.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -14,7 +14,6 @@ export class TruckFunctions extends TruckVerify implements TruckAbstract {
   }
 
   createTruck(data: CreateTruckDto): Promise<Truck> {
-    console.log('Chegou');
     return this.prisma.truck.create({
       data,
     });
@@ -43,12 +42,9 @@ export class TruckFunctions extends TruckVerify implements TruckAbstract {
     });
   }
 
-  grupTruckBrand() {
-    return this.prisma.truck.groupBy({
-      by: ['brand'],
-      where: {
-        fromId: null,
-      },
+  async groupTruckBrand() {
+    return await this.prisma.truck.groupBy({
+      by: ['brand', 'id', 'fromId'],
     });
   }
 
@@ -69,14 +65,14 @@ export class TruckFunctions extends TruckVerify implements TruckAbstract {
     });
   }
 
-  async linkTruck(data: AddTruckDto, user: { userId: string }) {
+  async linkTruck(data: AddRelationDto, user: { userId: string }) {
     const truck = await this.prisma.user.update({
       where: {
         id: user.userId,
       },
       data: {
         Trucks: {
-          connect: data.trucks,
+          connect: data.relation,
         },
       },
       select: {
@@ -86,14 +82,14 @@ export class TruckFunctions extends TruckVerify implements TruckAbstract {
     return truck.Trucks;
   }
 
-  async unlinkTruck(data: AddTruckDto, user: { userId: string }) {
+  async unlinkTruck(data: AddRelationDto, user: { userId: string }) {
     const truck = await this.prisma.user.update({
       where: {
         id: user.userId,
       },
       data: {
         Trucks: {
-          disconnect: data.trucks,
+          disconnect: data.relation,
         },
       },
       select: {

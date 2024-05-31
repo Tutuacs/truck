@@ -1,64 +1,123 @@
-import { ProductVerify } from "./product-exist.filter";
-import { ProductAbstract } from "./product-abstract";
-import { Injectable } from "@nestjs/common";
-import { CreateProductDto } from "../dto/create-product.dto";
-import { Product } from "@prisma/client";
-import { UpdateProductDto } from "../dto/update-product.dto";
-import { AddTruckDto } from "src/truck/dto/add-truck.dto";
+import { ProductVerify } from './product-exist.filter';
+import { ProductAbstract } from './product-abstract';
+import { Injectable, NotImplementedException } from '@nestjs/common';
+import { CreateProductDto } from '../dto/create-product.dto';
+import { Product } from '@prisma/client';
+import { UpdateProductDto } from '../dto/update-product.dto';
+import { AddRelationDto } from 'src/truck/dto/add-truck.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ProductFunction extends ProductVerify implements ProductAbstract {
-    createProduct(data: CreateProductDto): Promise<Product> {
-        return this.prisma.product.create({ data });
-    }
+  constructor(prisma: PrismaService) {
+    super(prisma);
+  }
 
-    findProduct(id: string): Promise<Product> {
-        return this.prisma.product.findUnique({ where: { id } });
-    }
+  createProduct(data: CreateProductDto): Promise<Product> {
+    return this.prisma.product.create({ data });
+  }
 
-    listProduct(): Promise<Product[]> {
-        return this.prisma.product.findMany();
-    }
+  findProduct(id: string): Promise<Product> {
+    return this.prisma.product.findUnique({ where: { id } });
+  }
 
-    updateProduct(id: string, data: UpdateProductDto): Promise<Product> {
-        return this.prisma.product.update({ where: { id }, data });
-    }
-
-    removeProduct(id: string): Promise<Product> {
-        return this.prisma.product.delete({ where: { id } });
-    }
-
-    async linkTruck(data: AddTruckDto, id: string) {
-        const product = await this.prisma.product.update({
-          where: {
-            id,
+  listProduct(): Promise<Product[]> {
+    return this.prisma.product.findMany({
+      include: {
+        Truck: {
+          select: {
+            id: true,
           },
-          data: {
-            Truck: {
-              connect: data.trucks,
-            },
+        },
+      },
+    });
+  }
+
+  updateProduct(id: string, data: UpdateProductDto): Promise<Product> {
+    return this.prisma.product.update({ where: { id }, data });
+  }
+
+  removeProduct(id: string): Promise<Product> {
+    return this.prisma.product.delete({ where: { id } });
+  }
+
+  async linkTruck(data: AddRelationDto, id: string) {
+    const product = await this.prisma.product.update({
+      where: {
+        id,
+      },
+      data: {
+        Truck: {
+          connect: data.relation,
+        },
+      },
+      select: {
+        Truck: true,
+      },
+    });
+    return product.Truck;
+  }
+
+  async linkedProducts(id: string) {
+    return this.prisma.product.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        RelatedWith: true,
+      },
+    });
+  }
+
+  async linkVariation(data: AddRelationDto, id: string, type: string) {
+    if (type.toLowerCase() === 'connect') {
+      return this.prisma.product.update({
+        where: {
+          id,
+        },
+        data: {
+          RelationWith: {
+            connect: data.relation,
           },
-          select:{
-            Truck: true
-          }
-        });
-        return product.Truck
-      }
-    
-      async unlinkTruck(data: AddTruckDto, id: string) {
-        const product = await this.prisma.product.update({
-          where: {
-            id,
+        },
+        include: {
+          RelationWith: true,
+        },
+      });
+    } else if (type.toLowerCase() === 'disconnect') {
+      return this.prisma.product.update({
+        where: {
+          id,
+        },
+        data: {
+          RelationWith: {
+            disconnect: data.relation,
           },
-          data: {
-            Truck: {
-              disconnect: data.trucks
-            },
-          },
-          select:{
-            Truck: true
-          }
-        });
-        return product.Truck
-      }
+        },
+        include: {
+          RelationWith: true,
+        },
+      });
+    }else{
+      console.log(`Invalid type: ${type}`);
+      throw new NotImplementedException("Type not implemented: " + type)
+    }
+  }
+
+  async unlinkTruck(data: AddRelationDto, id: string) {
+    const product = await this.prisma.product.update({
+      where: {
+        id,
+      },
+      data: {
+        Truck: {
+          disconnect: data.relation,
+        },
+      },
+      select: {
+        Truck: true,
+      },
+    });
+    return product.Truck;
+  }
 }

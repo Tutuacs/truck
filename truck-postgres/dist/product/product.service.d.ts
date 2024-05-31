@@ -1,6 +1,6 @@
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { AddTruckDto } from 'src/truck/dto/add-truck.dto';
+import { AddRelationDto } from 'src/truck/dto/add-truck.dto';
 import { ProductAbstract } from './functions/product-abstract';
 export declare class ProductService {
     private readonly productFunctions;
@@ -41,7 +41,7 @@ export declare class ProductService {
         promotion: boolean;
         comboId: string;
     }>;
-    linkTruck(data: AddTruckDto, id: string): Promise<{
+    linkTruck(data: AddRelationDto, id: string): Promise<{
         id: string;
         name: string;
         image: string;
@@ -52,7 +52,21 @@ export declare class ProductService {
         engine: string;
         fromId: string;
     }[]>;
-    unlinkTruck(data: AddTruckDto, id: string): Promise<{
+    linkedProducts(id: string): Promise<{
+        RelatedWith: {
+            id: string;
+            name: string;
+            description: string;
+            image: string;
+            active: boolean;
+            price: number;
+            color: string;
+            brandsId: string;
+            promotion: boolean;
+            comboId: string;
+        }[];
+    }>;
+    unlinkTruck(data: AddRelationDto, id: string): Promise<{
         id: string;
         name: string;
         image: string;
@@ -63,6 +77,20 @@ export declare class ProductService {
         engine: string;
         fromId: string;
     }[]>;
+    linkVariation(data: AddRelationDto, id: string, type: string): Promise<{
+        RelationWith: {
+            id: string;
+            name: string;
+            description: string;
+            image: string;
+            active: boolean;
+            price: number;
+            color: string;
+            brandsId: string;
+            promotion: boolean;
+            comboId: string;
+        }[];
+    }>;
     update(id: string, data: UpdateProductDto): Promise<{
         id: string;
         name: string;

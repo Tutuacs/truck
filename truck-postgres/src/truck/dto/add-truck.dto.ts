@@ -7,14 +7,14 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-export class AddTruckDto {
+export class AddRelationDto {
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => Truck)
-  trucks: Truck[];
+  @Type(() => RelationId)
+  relation: RelationId[];
 }
 
-export class Truck {
+export class RelationId {
   @IsNotEmpty()
   @IsString()
   @MinLength(24, {

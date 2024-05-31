@@ -15,65 +15,64 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProfileController = void 0;
 const common_1 = require("@nestjs/common");
 const profile_service_1 = require("./profile.service");
-const create_profile_dto_1 = require("./dto/create-profile.dto");
 const update_profile_dto_1 = require("./dto/update-profile.dto");
+const guards_1 = require("../guards");
+const decorators_1 = require("../decorators");
+const UserAtuh_decorator_1 = require("../decorators/UserAtuh.decorator");
 let ProfileController = class ProfileController {
     constructor(profileService) {
         this.profileService = profileService;
     }
-    create(createProfileDto) {
-        return this.profileService.create(createProfileDto);
-    }
     findAll() {
         return this.profileService.findAll();
     }
-    findOne(id) {
-        return this.profileService.findOne(+id);
+    profileInfo(user) {
+        return this.profileService.profileInfo(user);
     }
-    update(id, updateProfileDto) {
-        return this.profileService.update(+id, updateProfileDto);
+    findOne(id, user) {
+        return this.profileService.findOne(id, user);
     }
-    remove(id) {
-        return this.profileService.remove(+id);
+    update(id, data, user) {
+        return this.profileService.update(id, data, user);
     }
 };
 exports.ProfileController = ProfileController;
 __decorate([
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_profile_dto_1.CreateProfileDto]),
-    __metadata("design:returntype", void 0)
-], ProfileController.prototype, "create", null);
-__decorate([
+    (0, decorators_1.Acess)(decorators_1.Role.Admin),
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], ProfileController.prototype, "findAll", null);
 __decorate([
+    (0, decorators_1.Acess)(),
+    (0, common_1.Get)('me'),
+    __param(0, (0, UserAtuh_decorator_1.UserAuth)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], ProfileController.prototype, "profileInfo", null);
+__decorate([
+    (0, decorators_1.Acess)(),
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, UserAtuh_decorator_1.UserAuth)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], ProfileController.prototype, "findOne", null);
 __decorate([
+    (0, decorators_1.Acess)(),
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, UserAtuh_decorator_1.UserAuth)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_profile_dto_1.UpdateProfileDto]),
+    __metadata("design:paramtypes", [String, update_profile_dto_1.UpdateProfileDto, Object]),
     __metadata("design:returntype", void 0)
 ], ProfileController.prototype, "update", null);
-__decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], ProfileController.prototype, "remove", null);
 exports.ProfileController = ProfileController = __decorate([
+    (0, common_1.UseGuards)(guards_1.AuthGuard, guards_1.RoleGuard),
     (0, common_1.Controller)('profile'),
     __metadata("design:paramtypes", [profile_service_1.ProfileService])
 ], ProfileController);

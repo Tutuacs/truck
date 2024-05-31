@@ -3,7 +3,7 @@ import { CreateTruckDto } from './dto/create-truck.dto';
 import { UpdateTruckDto } from './dto/update-truck.dto';
 import { TruckAbstract } from './functions/truck-abstract';
 import { Role } from 'src/decorators';
-import { AddTruckDto } from './dto/add-truck.dto';
+import { AddRelationDto } from './dto/add-truck.dto';
 
 @Injectable()
 export class TruckService {
@@ -18,7 +18,7 @@ export class TruckService {
   }
 
   findOne(id: string) {
-    return this.truckFunctions.listTruck();
+    return this.truckFunctions.findTruck(id);
   }
 
   listByUserId(id: string, user: {role: number, id: string}) {
@@ -28,11 +28,15 @@ export class TruckService {
     return this.truckFunctions.listByUserId(id);
   }
 
-  linkTruck(data: AddTruckDto, user: {userId: string}) {
+  async groupTrucks() {
+    return this.truckFunctions.groupTruckBrand();
+  }
+
+  linkTruck(data: AddRelationDto, user: {userId: string}) {
     return this.truckFunctions.linkTruck(data, user);
   }
 
-  unlinkTruck(data: AddTruckDto, user: {userId: string}) {
+  unlinkTruck(data: AddRelationDto, user: {userId: string}) {
     return this.truckFunctions.unlinkTruck(data, user);
   }
 

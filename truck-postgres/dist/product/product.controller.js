@@ -30,14 +30,20 @@ let ProductController = class ProductController {
     findAll() {
         return this.productService.findAll();
     }
+    linkedProducts(id) {
+        return this.productService.linkedProducts(id);
+    }
     findOne(id) {
         return this.productService.findOne(id);
     }
-    linkTruck(trucks, id) {
-        return this.productService.linkTruck(trucks, id);
+    linkTruck(relation, id) {
+        return this.productService.linkTruck(relation, id);
     }
-    unlinkTruck(trucks, id) {
-        return this.productService.unlinkTruck(trucks, id);
+    unlinkTruck(relation, id) {
+        return this.productService.unlinkTruck(relation, id);
+    }
+    linkVariation(relation, id, type) {
+        return this.productService.linkVariation(relation, id, type);
     }
     update(id, data) {
         return this.productService.update(id, data);
@@ -62,6 +68,13 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ProductController.prototype, "findAll", null);
 __decorate([
+    (0, common_1.Get)('linked-products/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ProductController.prototype, "linkedProducts", null);
+__decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -74,7 +87,7 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [add_truck_dto_1.AddTruckDto, String]),
+    __metadata("design:paramtypes", [add_truck_dto_1.AddRelationDto, String]),
     __metadata("design:returntype", void 0)
 ], ProductController.prototype, "linkTruck", null);
 __decorate([
@@ -83,9 +96,19 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [add_truck_dto_1.AddTruckDto, String]),
+    __metadata("design:paramtypes", [add_truck_dto_1.AddRelationDto, String]),
     __metadata("design:returntype", void 0)
 ], ProductController.prototype, "unlinkTruck", null);
+__decorate([
+    (0, decorators_1.Acess)(decorators_1.Role.Admin),
+    (0, common_1.Post)('relation-variation/:id/:type'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Param)('id')),
+    __param(2, (0, common_1.Param)('type')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [add_truck_dto_1.AddRelationDto, String, String]),
+    __metadata("design:returntype", void 0)
+], ProductController.prototype, "linkVariation", null);
 __decorate([
     (0, decorators_1.Acess)(decorators_1.Role.Admin),
     (0, common_1.Patch)(':id'),

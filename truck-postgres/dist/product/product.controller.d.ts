@@ -1,7 +1,7 @@
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { AddTruckDto } from 'src/truck/dto/add-truck.dto';
+import { AddRelationDto } from 'src/truck/dto/add-truck.dto';
 export declare class ProductController {
     private readonly productService;
     constructor(productService: ProductService);
@@ -29,6 +29,20 @@ export declare class ProductController {
         promotion: boolean;
         comboId: string;
     }[]>;
+    linkedProducts(id: string): Promise<{
+        RelatedWith: {
+            id: string;
+            name: string;
+            description: string;
+            image: string;
+            active: boolean;
+            price: number;
+            color: string;
+            brandsId: string;
+            promotion: boolean;
+            comboId: string;
+        }[];
+    }>;
     findOne(id: string): Promise<{
         id: string;
         name: string;
@@ -41,7 +55,7 @@ export declare class ProductController {
         promotion: boolean;
         comboId: string;
     }>;
-    linkTruck(trucks: AddTruckDto, id: string): Promise<{
+    linkTruck(relation: AddRelationDto, id: string): Promise<{
         id: string;
         name: string;
         image: string;
@@ -52,7 +66,7 @@ export declare class ProductController {
         engine: string;
         fromId: string;
     }[]>;
-    unlinkTruck(trucks: AddTruckDto, id: string): Promise<{
+    unlinkTruck(relation: AddRelationDto, id: string): Promise<{
         id: string;
         name: string;
         image: string;
@@ -63,6 +77,20 @@ export declare class ProductController {
         engine: string;
         fromId: string;
     }[]>;
+    linkVariation(relation: AddRelationDto, id: string, type: string): Promise<{
+        RelationWith: {
+            id: string;
+            name: string;
+            description: string;
+            image: string;
+            active: boolean;
+            price: number;
+            color: string;
+            brandsId: string;
+            promotion: boolean;
+            comboId: string;
+        }[];
+    }>;
     update(id: string, data: UpdateProductDto): Promise<{
         id: string;
         name: string;

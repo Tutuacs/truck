@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { AddTruckDto } from 'src/truck/dto/add-truck.dto';
+import { AddRelationDto } from 'src/truck/dto/add-truck.dto';
 import { ProductAbstract } from './functions/product-abstract';
 
 @Injectable()
@@ -21,12 +21,20 @@ export class ProductService {
     return this.productFunctions.findProduct(id);
   }
 
-  linkTruck(data: AddTruckDto,id: string) {
+  linkTruck(data: AddRelationDto,id: string) {
     return this.productFunctions.linkTruck(data, id);
   }
 
-  unlinkTruck(data: AddTruckDto, id: string) {
+  linkedProducts(id: string) {
+    return this.productFunctions.linkedProducts(id);
+  }
+
+  unlinkTruck(data: AddRelationDto, id: string) {
     return this.productFunctions.unlinkTruck(data, id);
+  }
+
+  linkVariation(data: AddRelationDto, id: string, type: string) {
+    return this.productFunctions.linkVariation(data, id, type);
   }
 
   update(id: string, data: UpdateProductDto) {

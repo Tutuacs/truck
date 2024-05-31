@@ -28,8 +28,14 @@ let ProductService = class ProductService {
     linkTruck(data, id) {
         return this.productFunctions.linkTruck(data, id);
     }
+    linkedProducts(id) {
+        return this.productFunctions.linkedProducts(id);
+    }
     unlinkTruck(data, id) {
         return this.productFunctions.unlinkTruck(data, id);
+    }
+    linkVariation(data, id, type) {
+        return this.productFunctions.linkVariation(data, id, type);
     }
     update(id, data) {
         return this.productFunctions.updateProduct(id, data);

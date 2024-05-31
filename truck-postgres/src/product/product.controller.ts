@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { AddTruckDto } from 'src/truck/dto/add-truck.dto';
+import { AddRelationDto } from 'src/truck/dto/add-truck.dto';
 import { Acess, Role } from 'src/decorators';
 import { AuthGuard, RoleGuard } from 'src/guards';
 
@@ -21,6 +21,11 @@ export class ProductController {
   findAll() {
     return this.productService.findAll();
   }
+
+  @Get('linked-products/:id')
+  linkedProducts(@Param('id') id: string) {
+    return this.productService.linkedProducts(id);
+  }
   
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -29,14 +34,20 @@ export class ProductController {
   
   @Acess(Role.Admin)
   @Post('link-truck/:id')
-  linkTruck(@Body() trucks: AddTruckDto, @Param('id') id: string) {
-    return this.productService.linkTruck(trucks, id);
+  linkTruck(@Body() relation: AddRelationDto, @Param('id') id: string) {
+    return this.productService.linkTruck(relation, id);
   }
   
   @Acess(Role.Admin)
   @Post('unlink-truck/:id')
-  unlinkTruck(@Body() trucks: AddTruckDto, @Param('id') id: string) {
-    return this.productService.unlinkTruck(trucks, id);
+  unlinkTruck(@Body() relation: AddRelationDto, @Param('id') id: string) {
+    return this.productService.unlinkTruck(relation, id);
+  }
+  
+  @Acess(Role.Admin)
+  @Post('relation-variation/:id/:type')
+  linkVariation(@Body() relation: AddRelationDto, @Param('id') id: string, @Param('type') type: string) {
+    return this.productService.linkVariation(relation, id, type);
   }
   
   @Acess(Role.Admin)

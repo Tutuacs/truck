@@ -24,13 +24,16 @@ let TruckService = class TruckService {
         return this.truckFunctions.listTruck();
     }
     findOne(id) {
-        return this.truckFunctions.listTruck();
+        return this.truckFunctions.findTruck(id);
     }
     listByUserId(id, user) {
         if (user.role != decorators_1.Role.Admin && user.id != id) {
             throw new common_1.UnauthorizedException("Seu usuário não pode visualizar os caminhões de outro usuário.");
         }
         return this.truckFunctions.listByUserId(id);
+    }
+    async groupTrucks() {
+        return this.truckFunctions.groupTruckBrand();
     }
     linkTruck(data, user) {
         return this.truckFunctions.linkTruck(data, user);

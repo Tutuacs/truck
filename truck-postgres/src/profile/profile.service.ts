@@ -1,26 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ProfileAbstract } from './functions/profile-abstract';
+import { Role } from 'src/decorators';
 
 @Injectable()
 export class ProfileService {
-  create(createProfileDto: CreateProfileDto) {
-    return 'This action adds a new profile';
-  }
+
+  constructor(private readonly profileFunctions: ProfileAbstract) {}
+
+  // create(createProfileDto: CreateProfileDto) {
+  //   return 'This action adds a new profile';
+  // }
 
   findAll() {
-    return `This action returns all profile`;
+    return this.profileFunctions.listProfile();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} profile`;
+  profileInfo(user: {id: string, userId: string}) {
+    return this.profileFunctions.profileInfo(user);
   }
 
-  update(id: number, updateProfileDto: UpdateProfileDto) {
-    return `This action updates a #${id} profile`;
+  async findOne(id: string, user: {id: string, role: Role}) {
+    if (user.role != Role.Admin && user.id != id) {
+      throw new UnauthorizedException("Você não pode visualizar informações de terceiros");
+    }
+    const profile = await this.profileFunctions.findProfile(id);
+    return {id: profile.id, email: profile.email, role: profile.role, userId: profile.userId, image: profile.image}
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} profile`;
+  update(id: string, data: UpdateProfileDto, user: {id: string, role: Role}) {
+    if (user.role != Role.Admin && user.id != id) {
+      throw new UnauthorizedException("Você não pode alterar informações de terceiros");
+    }
+    return this.profileFunctions.updateProfile(id, data);
   }
+
+  // remove(id: string) {
+  //   return `This action removes a #${id} profile`;
+  // }
 }

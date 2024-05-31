@@ -18,7 +18,6 @@ let TruckFunctions = class TruckFunctions extends truck_exist_filter_1.TruckVeri
         super(prisma);
     }
     createTruck(data) {
-        console.log('Chegou');
         return this.prisma.truck.create({
             data,
         });
@@ -43,12 +42,9 @@ let TruckFunctions = class TruckFunctions extends truck_exist_filter_1.TruckVeri
             },
         });
     }
-    grupTruckBrand() {
-        return this.prisma.truck.groupBy({
-            by: ['brand'],
-            where: {
-                fromId: null,
-            },
+    async groupTruckBrand() {
+        return await this.prisma.truck.groupBy({
+            by: ['brand', 'id', 'fromId'],
         });
     }
     updateTruck(id, data) {
@@ -73,7 +69,7 @@ let TruckFunctions = class TruckFunctions extends truck_exist_filter_1.TruckVeri
             },
             data: {
                 Trucks: {
-                    connect: data.trucks,
+                    connect: data.relation,
                 },
             },
             select: {
@@ -89,7 +85,7 @@ let TruckFunctions = class TruckFunctions extends truck_exist_filter_1.TruckVeri
             },
             data: {
                 Trucks: {
-                    disconnect: data.trucks,
+                    disconnect: data.relation,
                 },
             },
             select: {
