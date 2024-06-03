@@ -1,28 +1,46 @@
-import { Injectable } from "@nestjs/common";
-import { PromotionProductVerify } from "./promotion-product-exist.filter";
-import { PromotionProductAbstract } from "./promotion-product-abstract";
-import { CreatePromotionProductDto } from "../dto/create-promotion-product.dto";
-import { UpdatePromotionProductDto } from "../dto/update-promotion-product.dto";
+import { Injectable } from '@nestjs/common';
+import { PromotionProductVerify } from './promotion-product-exist.filter';
+import { PromotionProductAbstract } from './promotion-product-abstract';
+import { CreatePromotionProductDto } from '../dto/create-promotion-product.dto';
+import { UpdatePromotionProductDto } from '../dto/update-promotion-product.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
-export class PromotionProductFunctions extends PromotionProductVerify implements PromotionProductAbstract {
-    createPromotionProduct(data: CreatePromotionProductDto) {
-        return this.prisma.promotionProduct.create({ data });
-    }
+export class PromotionProductFunctions
+  extends PromotionProductVerify
+  implements PromotionProductAbstract
+{
+  constructor(prisma: PrismaService) {
+    super(prisma);
+  }
 
-    findPromotionProduct(id: string) {
-        return this.prisma.promotionProduct.findUnique({ where: { id } });
-    }
+  createPromotionProduct(data: CreatePromotionProductDto) {
+    return this.prisma.promotionProduct.createManyAndReturn({
+      data: data.promotionProducts
+    })
+  }
 
-    listPromotionProduct() {
-        return this.prisma.promotionProduct.findMany();
-    }
+  findPromotionProduct(id: string) {
+    return this.prisma.promotionProduct.findUnique({ where: { id } });
+  }
 
-    updatePromotionProduct(id: string, data: UpdatePromotionProductDto) {
-        return this.prisma.promotionProduct.update({ where: { id }, data });
-    }
+  listPromotionProduct() {
+    return this.prisma.promotionProduct.findMany();
+  }
 
-    removePromotionProduct(id: string) {
-        return this.prisma.promotionProduct.delete({ where: { id } });
-    }
+  listByPromotion(promotionId: string) {
+    return this.prisma.promotionProduct.findMany({
+      where:{
+        promotionId,
+      }
+    });
+  }
+
+  updatePromotionProduct(id: string, data: UpdatePromotionProductDto) {
+    return this.prisma.promotionProduct.update({ where: { id }, data });
+  }
+
+  removePromotionProduct(id: string) {
+    return this.prisma.promotionProduct.delete({ where: { id } });
+  }
 }

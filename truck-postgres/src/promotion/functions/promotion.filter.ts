@@ -3,9 +3,15 @@ import { PromotionVerify } from "./promotion-exist.filter";
 import { PromotionAbstract } from "./promotion-abstract";
 import { CreatePromotionDto } from "../dto/create-promotion.dto";
 import { UpdatePromotionDto } from "../dto/update-promotion.dto";
+import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
 export class PromotionFunction extends PromotionVerify implements PromotionAbstract {
+
+    constructor(prisma: PrismaService) {
+        super(prisma);
+    }
+
     createPromotion(data: CreatePromotionDto) {
         return this.prisma.promotion.create({ data });
     }

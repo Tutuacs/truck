@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsNumber, IsOptional, IsString, Min } from "class-validator";
+import { IsArray, IsNumber, IsOptional, IsString, Min, ValidateNested } from "class-validator";
 
 export class CreateItemDto {
 
@@ -22,4 +22,15 @@ export class CreateItemDto {
     @IsString()
     productId: string;
 
+    @IsString()
+    comboId: string;
+
+}
+
+export class CreateManyItemsDto {
+
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => CreateItemDto)
+    items: CreateItemDto[];
 }

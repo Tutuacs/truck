@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsNumber, IsOptional, IsString } from "class-validator";
+import { IsNumber, IsOptional, IsString, MinLength } from "class-validator";
 
 export class CreateTruckDto {
 
@@ -31,6 +31,7 @@ export class CreateTruckDto {
 
     @IsOptional()
     @IsString()
+    @MinLength(36)
     fromId: string;
 
 }

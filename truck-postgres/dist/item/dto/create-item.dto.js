@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateItemDto = void 0;
+exports.CreateManyItemsDto = exports.CreateItemDto = void 0;
 const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
 class CreateItemDto {
@@ -38,4 +38,17 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateItemDto.prototype, "productId", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateItemDto.prototype, "comboId", void 0);
+class CreateManyItemsDto {
+}
+exports.CreateManyItemsDto = CreateManyItemsDto;
+__decorate([
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.ValidateNested)({ each: true }),
+    (0, class_transformer_1.Type)(() => CreateItemDto),
+    __metadata("design:type", Array)
+], CreateManyItemsDto.prototype, "items", void 0);
 //# sourceMappingURL=create-item.dto.js.map

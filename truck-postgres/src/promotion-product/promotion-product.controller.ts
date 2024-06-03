@@ -17,18 +17,23 @@ export class PromotionProductController {
     return this.promotionProductService.findAll();
   }
 
+  @Get('promotion/:id')
+  findAllByPromotion(@Param('id') id: string) {
+    return this.promotionProductService.findAllByPromotion(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.promotionProductService.findOne(+id);
+    return this.promotionProductService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePromotionProductDto: UpdatePromotionProductDto) {
-    return this.promotionProductService.update(+id, updatePromotionProductDto);
+    return this.promotionProductService.update(id, updatePromotionProductDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.promotionProductService.remove(+id);
+    return this.promotionProductService.remove(id);
   }
 }

@@ -51,6 +51,7 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(36),
     __metadata("design:type", String)
 ], CreateTruckDto.prototype, "fromId", void 0);
 //# sourceMappingURL=create-truck.dto.js.map

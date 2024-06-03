@@ -27,14 +27,17 @@ let PromotionProductController = class PromotionProductController {
     findAll() {
         return this.promotionProductService.findAll();
     }
+    findAllByPromotion(id) {
+        return this.promotionProductService.findAllByPromotion(id);
+    }
     findOne(id) {
-        return this.promotionProductService.findOne(+id);
+        return this.promotionProductService.findOne(id);
     }
     update(id, updatePromotionProductDto) {
-        return this.promotionProductService.update(+id, updatePromotionProductDto);
+        return this.promotionProductService.update(id, updatePromotionProductDto);
     }
     remove(id) {
-        return this.promotionProductService.remove(+id);
+        return this.promotionProductService.remove(id);
     }
 };
 exports.PromotionProductController = PromotionProductController;
@@ -51,6 +54,13 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], PromotionProductController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('promotion/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], PromotionProductController.prototype, "findAllByPromotion", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),

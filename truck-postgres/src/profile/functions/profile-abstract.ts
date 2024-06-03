@@ -12,7 +12,7 @@ export abstract class ProfileAbstract {
         role: number;
         userId: string;
         image: string;
-    }[]>
+    }[]>;
     abstract updateProfile(id: string, data: UpdateProfileDto): Promise<Profile>;
     abstract removeProfile(id: string): Promise<Profile>;
 }

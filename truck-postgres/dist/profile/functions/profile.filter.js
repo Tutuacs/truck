@@ -38,6 +38,8 @@ let ProfileFunctions = class ProfileFunctions extends profile_exist_filter_1.Pro
                 User: {
                     select: {
                         id: true,
+                        email: true,
+                        document: true,
                         name: true,
                         Trucks: {
                             select: {
@@ -45,8 +47,6 @@ let ProfileFunctions = class ProfileFunctions extends profile_exist_filter_1.Pro
                                 name: true,
                             },
                         },
-                        document: true,
-                        email: true,
                         Order: true,
                     },
                 },

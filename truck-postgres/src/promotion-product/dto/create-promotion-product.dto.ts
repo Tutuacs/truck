@@ -1,11 +1,21 @@
 import { Type } from "class-transformer";
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, MinLength, ValidateNested } from "class-validator";
 
 export class CreatePromotionProductDto {
 
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => UniqPromotionProductDTo)
+    promotionProducts: UniqPromotionProductDTo[];
+    
+}
+
+
+export class UniqPromotionProductDTo {
+
     @IsNotEmpty()
-    @Type(() => Number)
     @IsNumber()
+    @Type(() => Number)
     price: number;
 
     @IsOptional()
@@ -15,10 +25,11 @@ export class CreatePromotionProductDto {
 
     @IsNotEmpty()
     @IsString()
+    @MinLength(36)
     productId: string;
     
     @IsNotEmpty()
     @IsString()
+    @MinLength(36)
     promotionId: string;
-    
 }

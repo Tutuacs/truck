@@ -25,18 +25,17 @@ export declare class ProfileFunctions extends ProfileVerify implements ProfileAb
         id: string;
         userId: string;
     }): import("@prisma/client").Prisma.Prisma__ProfileClient<{
+        image: string;
         id: string;
         email: string;
-        role: number;
-        image: string;
         User: {
+            name: string;
             id: string;
             email: string;
-            name: string;
             document: string;
             Trucks: {
-                id: string;
                 name: string;
+                id: string;
             }[];
             Order: {
                 id: string;
@@ -47,13 +46,14 @@ export declare class ProfileFunctions extends ProfileVerify implements ProfileAb
                 userId: string;
             }[];
         };
+        role: number;
     }, null, import("@prisma/client/runtime/library").DefaultArgs>;
     listProfile(): import("@prisma/client").Prisma.PrismaPromise<{
+        image: string;
         id: string;
         email: string;
-        role: number;
-        image: string;
         userId: string;
+        role: number;
     }[]>;
     updateProfile(id: string, data: UpdateProfileDto): import("@prisma/client").Prisma.Prisma__ProfileClient<{
         id: string;

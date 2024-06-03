@@ -34,6 +34,8 @@ export class ProfileFunctions extends ProfileVerify implements ProfileAbstract {
         User: {
           select: {
             id: true,
+            email: true,
+            document: true,
             name: true,
             Trucks: {
               select: {
@@ -41,8 +43,6 @@ export class ProfileFunctions extends ProfileVerify implements ProfileAbstract {
                 name: true,
               },
             },
-            document: true,
-            email: true,
             Order: true,
           },
         },

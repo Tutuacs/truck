@@ -1,26 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePromotionProductDto } from './dto/create-promotion-product.dto';
 import { UpdatePromotionProductDto } from './dto/update-promotion-product.dto';
+import { PromotionProductAbstract } from './functions/promotion-product-abstract';
 
 @Injectable()
 export class PromotionProductService {
-  create(createPromotionProductDto: CreatePromotionProductDto) {
-    return 'This action adds a new promotionProduct';
+
+  constructor(private readonly promotionProductFunctions: PromotionProductAbstract){}
+
+  create(data: CreatePromotionProductDto) {
+    return this.promotionProductFunctions.createPromotionProduct(data);
   }
 
   findAll() {
-    return `This action returns all promotionProduct`;
+    return this.promotionProductFunctions.listPromotionProduct();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} promotionProduct`;
+  findAllByPromotion(id: string) {
+    return this.promotionProductFunctions.listByPromotion(id);
   }
 
-  update(id: number, updatePromotionProductDto: UpdatePromotionProductDto) {
-    return `This action updates a #${id} promotionProduct`;
+  findOne(id: string) {
+    return this.promotionProductFunctions.findPromotionProduct(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} promotionProduct`;
+  update(id: string, data: UpdatePromotionProductDto) {
+    return this.promotionProductFunctions.updatePromotionProduct(id, data);
+  }
+
+  remove(id: string) {
+    return this.promotionProductFunctions.removePromotionProduct(id);
   }
 }

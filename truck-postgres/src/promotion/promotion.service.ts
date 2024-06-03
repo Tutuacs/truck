@@ -5,10 +5,14 @@ import { PromotionAbstract } from './functions/promotion-abstract';
 
 @Injectable()
 export class PromotionService {
-  
-  constructor(private readonly promotionFunctions: PromotionAbstract) { }
+  constructor(private readonly promotionFunctions: PromotionAbstract) {}
 
   create(data: CreatePromotionDto) {
+    /*
+    EG:
+    	"promotionFrom": "2024-06-03T13:05:49.338Z",
+	    "promotionTo": "2024-06-10T13:05:49.338Z"
+    */
     return this.promotionFunctions.createPromotion(data);
   }
 

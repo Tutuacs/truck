@@ -17,7 +17,7 @@ export class AddRelationDto {
 export class RelationId {
   @IsNotEmpty()
   @IsString()
-  @MinLength(24, {
+  @MinLength(36, {
     message: 'Id inválido.',
   })
   id: string;
