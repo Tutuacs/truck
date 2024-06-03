@@ -1,6 +1,8 @@
 # compiled output
-/dist
-/node_modules
+test_postgres/dist
+test_postgres/node_modules
+truck-postgres/dist
+truck-postgres/node_modules
 
 # Logs
 logs
