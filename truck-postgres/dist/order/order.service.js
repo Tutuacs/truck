@@ -9,7 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderService = void 0;
 const common_1 = require("@nestjs/common");
 let OrderService = class OrderService {
-    create(createOrderDto) {
+    create(data) {
         return 'This action adds a new order';
     }
     findAll() {
@@ -18,7 +18,7 @@ let OrderService = class OrderService {
     findOne(id) {
         return `This action returns a #${id} order`;
     }
-    update(id, updateOrderDto) {
+    update(id, data) {
         return `This action updates a #${id} order`;
     }
     remove(id) {

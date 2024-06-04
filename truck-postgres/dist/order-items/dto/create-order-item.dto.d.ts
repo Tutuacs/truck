@@ -4,3 +4,6 @@ export declare class CreateOrderItemDto {
     productId: string;
     orderId: string;
 }
+export declare class ManyOrderItemsDto {
+    items: CreateOrderItemDto[];
+}

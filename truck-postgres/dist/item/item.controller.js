@@ -24,6 +24,9 @@ let ItemController = class ItemController {
     create(data) {
         return this.itemService.create(data);
     }
+    createMany(data) {
+        return this.itemService.createMany(data);
+    }
     findAll() {
         return this.itemService.findAll();
     }
@@ -45,6 +48,13 @@ __decorate([
     __metadata("design:paramtypes", [create_item_dto_1.CreateItemDto]),
     __metadata("design:returntype", void 0)
 ], ItemController.prototype, "create", null);
+__decorate([
+    (0, common_1.Post)('many'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [create_item_dto_1.CreateManyItemsDto]),
+    __metadata("design:returntype", void 0)
+], ItemController.prototype, "createMany", null);
 __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),

@@ -23,6 +23,17 @@ let UserFunctions = class UserFunctions extends user_exist_filter_1.UserVerify {
     findUser(id) {
         return this.prisma.user.findUnique({ where: { id } });
     }
+    async findByProfile(id) {
+        const p = await this.prisma.profile.findUnique({
+            where: {
+                id,
+            },
+            include: {
+                User: true
+            }
+        });
+        return p.User;
+    }
     listUser() {
         return this.prisma.user.findMany();
     }

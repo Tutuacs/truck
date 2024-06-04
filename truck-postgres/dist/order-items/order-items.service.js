@@ -19,6 +19,9 @@ let OrderItemsService = class OrderItemsService {
     create(data) {
         return this.orderItemsFunction.createOrderItem(data);
     }
+    createMany(data) {
+        return this.orderItemsFunction.createManyOrderItem(data);
+    }
     findAll() {
         return `This action returns all orderItems`;
     }

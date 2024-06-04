@@ -1,7 +1,11 @@
 import { Type } from "class-transformer";
-import { IsArray, IsNumber, IsOptional, IsString, Min, ValidateNested } from "class-validator";
+import { IsArray, IsBoolean, IsEmpty, IsNotEmpty, IsNumber, IsOptional, IsString, Min, MinLength, ValidateNested } from "class-validator";
 
 export class CreateItemDto {
+
+    @IsOptional()
+    @IsEmpty()
+    id: string;
 
     @Type(() => Number)
     @IsNumber()
@@ -16,13 +20,20 @@ export class CreateItemDto {
     @IsOptional()
     @Type(() => Number)
     @IsNumber()
-    @Min(1)
     maxCombo: number;
 
-    @IsString()
-    productId: string;
+    @IsOptional()
+    @IsBoolean()
+    active: boolean;
 
+    @IsNotEmpty()
     @IsString()
+    @MinLength(36)
+    productId: string;
+    
+    @IsNotEmpty()
+    @IsString()
+    @MinLength(36)
     comboId: string;
 
 }

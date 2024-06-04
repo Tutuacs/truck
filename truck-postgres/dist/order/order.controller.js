@@ -17,24 +17,25 @@ const common_1 = require("@nestjs/common");
 const order_service_1 = require("./order.service");
 const create_order_dto_1 = require("./dto/create-order.dto");
 const update_order_dto_1 = require("./dto/update-order.dto");
+const guards_1 = require("../guards");
 let OrderController = class OrderController {
     constructor(orderService) {
         this.orderService = orderService;
     }
-    create(createOrderDto) {
-        return this.orderService.create(createOrderDto);
+    create(data) {
+        return this.orderService.create(data);
     }
     findAll() {
         return this.orderService.findAll();
     }
     findOne(id) {
-        return this.orderService.findOne(+id);
+        return this.orderService.findOne(id);
     }
-    update(id, updateOrderDto) {
-        return this.orderService.update(+id, updateOrderDto);
+    update(id, data) {
+        return this.orderService.update(id, data);
     }
     remove(id) {
-        return this.orderService.remove(+id);
+        return this.orderService.remove(id);
     }
 };
 exports.OrderController = OrderController;
@@ -74,6 +75,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], OrderController.prototype, "remove", null);
 exports.OrderController = OrderController = __decorate([
+    (0, common_1.UseGuards)(guards_1.AuthGuard, guards_1.RoleGuard),
     (0, common_1.Controller)('order'),
     __metadata("design:paramtypes", [order_service_1.OrderService])
 ], OrderController);

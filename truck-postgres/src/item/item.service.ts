@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateItemDto } from './dto/create-item.dto';
+import { CreateItemDto, CreateManyItemsDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { ItemAbstract } from './functions/item-abstract';
 
@@ -10,6 +10,10 @@ export class ItemService {
 
   create(data: CreateItemDto) {
     return this.itemFunctions.createItem(data);
+  }
+
+  createMany(data: CreateManyItemsDto) {
+    return this.itemFunctions.createManyItem(data);
   }
 
   findAll() {

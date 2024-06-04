@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateOrderItemDto } from './dto/create-order-item.dto';
+import { CreateOrderItemDto, ManyOrderItemsDto } from './dto/create-order-item.dto';
 import { UpdateOrderItemDto } from './dto/update-order-item.dto';
 import { OrderItemsAbstract } from './functions/order-items-abstract';
 
@@ -10,6 +10,10 @@ export class OrderItemsService {
 
   create(data: CreateOrderItemDto) {
     return this.orderItemsFunction.createOrderItem(data);
+  }
+
+  createMany(data: ManyOrderItemsDto) {
+    return this.orderItemsFunction.createManyOrderItem(data);
   }
 
   findAll() {

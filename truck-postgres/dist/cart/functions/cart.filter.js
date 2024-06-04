@@ -21,7 +21,7 @@ let CartFunctions = class CartFunctions extends cart_exist_filter_1.CartVerify {
         return this.prisma.cart.create({
             data: {
                 userId: data.userId,
-            }
+            },
         });
     }
     updateCart(id, data) {
@@ -30,6 +30,94 @@ let CartFunctions = class CartFunctions extends cart_exist_filter_1.CartVerify {
                 id,
             },
             data,
+        });
+    }
+    async findCartByProfile(profileId) {
+        const profile = await this.prisma.profile.findFirst({
+            where: {
+                id: profileId,
+            },
+            select: {
+                User: {
+                    select: {
+                        Cart: true,
+                    },
+                },
+            },
+        });
+        return profile.User.Cart;
+    }
+    async findCartByUser(userId) {
+        return this.prisma.cart.findFirst({
+            where: {
+                userId,
+            },
+        });
+    }
+    async findCart(id) {
+        return this.prisma.cart.findUnique({
+            where: {
+                id,
+            },
+        });
+    }
+    async listCart() {
+        return this.prisma.cart.findMany();
+    }
+    linkComboToCart(comboId, cartId) {
+        return this.prisma.cart.update({
+            where: {
+                id: cartId,
+            },
+            data: {
+                Combo: {
+                    connect: {
+                        id: comboId,
+                    },
+                },
+            },
+        });
+    }
+    unlinkComboFromCart(comboId, cartId) {
+        return this.prisma.cart.update({
+            where: {
+                id: cartId,
+            },
+            data: {
+                Combo: {
+                    disconnect: {
+                        id: comboId,
+                    },
+                },
+            },
+        });
+    }
+    linkProductToCart(productId, cartId) {
+        return this.prisma.cart.update({
+            where: {
+                id: cartId,
+            },
+            data: {
+                Product: {
+                    connect: {
+                        id: productId,
+                    },
+                },
+            },
+        });
+    }
+    unlinkProductFromCart(productId, cartId) {
+        return this.prisma.cart.update({
+            where: {
+                id: cartId,
+            },
+            data: {
+                Product: {
+                    disconnect: {
+                        id: productId,
+                    },
+                },
+            },
         });
     }
 };

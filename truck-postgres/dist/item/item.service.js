@@ -19,6 +19,9 @@ let ItemService = class ItemService {
     create(data) {
         return this.itemFunctions.createItem(data);
     }
+    createMany(data) {
+        return this.itemFunctions.createManyItem(data);
+    }
     findAll() {
         return this.itemFunctions.listItem();
     }

@@ -1,0 +1,12 @@
+export enum ORDER {
+    NAO_PAGO = 1,
+    PAGAMENTO_CONFIRMADO = 2,
+    EM_TRANSPORTE = 3,
+    ENTREGUE = 4,
+    CONFIRMADO = 5,
+    DEVOLUCAO = 6,
+    VALIDACAO = 7,
+    DEVOLUCAO_ACEITA = 8,
+    DEVOLUCAO_RECUSADA = 9,
+  }
+  

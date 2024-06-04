@@ -15,50 +15,81 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CartController = void 0;
 const common_1 = require("@nestjs/common");
 const cart_service_1 = require("./cart.service");
-const create_cart_dto_1 = require("./dto/create-cart.dto");
 const update_cart_dto_1 = require("./dto/update-cart.dto");
+const UserAtuh_decorator_1 = require("../decorators/UserAtuh.decorator");
+const decorators_1 = require("../decorators");
+const guards_1 = require("../guards");
 let CartController = class CartController {
     constructor(cartService) {
         this.cartService = cartService;
     }
-    create(createCartDto) {
-        return this.cartService.create(createCartDto);
-    }
     findAll() {
         return this.cartService.findAll();
     }
-    findOne(id) {
-        return this.cartService.findOne(+id);
+    findByProfile(id, user) {
+        return this.cartService.findByProfile(id, user);
     }
-    update(id, updateCartDto) {
-        return this.cartService.update(+id, updateCartDto);
+    findByUser(id, user) {
+        return this.cartService.findByUser(id, user);
     }
-    remove(id) {
-        return this.cartService.remove(+id);
+    connectionsCart(id, type, action, user) {
+        return this.cartService.connectionsCart(type, action, id, user);
+    }
+    findOne(id, user) {
+        return this.cartService.findOne(id, user);
+    }
+    update(id, data) {
+        return this.cartService.update(id, data);
     }
 };
 exports.CartController = CartController;
 __decorate([
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_cart_dto_1.CreateCartDto]),
-    __metadata("design:returntype", void 0)
-], CartController.prototype, "create", null);
-__decorate([
+    (0, decorators_1.Acess)(decorators_1.Role.Admin),
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], CartController.prototype, "findAll", null);
 __decorate([
+    (0, decorators_1.Acess)(),
+    (0, common_1.Get)('profile/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, UserAtuh_decorator_1.UserAuth)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], CartController.prototype, "findByProfile", null);
+__decorate([
+    (0, decorators_1.Acess)(),
+    (0, common_1.Get)('user/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, UserAtuh_decorator_1.UserAuth)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], CartController.prototype, "findByUser", null);
+__decorate([
+    (0, decorators_1.Acess)(),
+    (0, common_1.Get)(':action/:type/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Param)('type')),
+    __param(2, (0, common_1.Param)('action')),
+    __param(3, (0, UserAtuh_decorator_1.UserAuth)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String, Object]),
+    __metadata("design:returntype", void 0)
+], CartController.prototype, "connectionsCart", null);
+__decorate([
+    (0, decorators_1.Acess)(),
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, UserAtuh_decorator_1.UserAuth)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], CartController.prototype, "findOne", null);
 __decorate([
+    (0, decorators_1.Acess)(decorators_1.Role.Admin),
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
@@ -66,14 +97,8 @@ __decorate([
     __metadata("design:paramtypes", [String, update_cart_dto_1.UpdateCartDto]),
     __metadata("design:returntype", void 0)
 ], CartController.prototype, "update", null);
-__decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], CartController.prototype, "remove", null);
 exports.CartController = CartController = __decorate([
+    (0, common_1.UseGuards)(guards_1.AuthGuard, guards_1.RoleGuard),
     (0, common_1.Controller)('cart'),
     __metadata("design:paramtypes", [cart_service_1.CartService])
 ], CartController);

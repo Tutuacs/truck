@@ -10,13 +10,23 @@ exports.UserModule = void 0;
 const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
 const user_controller_1 = require("./user.controller");
+const prisma_module_1 = require("../prisma/prisma.module");
+const auth_module_1 = require("../auth/auth.module");
+const user_abstract_1 = require("./functions/user-abstract");
+const user_filter_1 = require("./functions/user.filter");
 let UserModule = class UserModule {
 };
 exports.UserModule = UserModule;
 exports.UserModule = UserModule = __decorate([
     (0, common_1.Module)({
+        imports: [prisma_module_1.PrismaModule, auth_module_1.AuthModule],
         controllers: [user_controller_1.UserController],
-        providers: [user_service_1.UserService],
+        providers: [user_service_1.UserService,
+            {
+                provide: user_abstract_1.UserAbstract,
+                useClass: user_filter_1.UserFunctions,
+            }
+        ],
     })
 ], UserModule);
 //# sourceMappingURL=user.module.js.map

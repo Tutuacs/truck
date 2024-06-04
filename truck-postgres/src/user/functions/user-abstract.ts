@@ -5,6 +5,7 @@ import { UpdateUserDto } from "../dto/update-user.dto";
 export abstract class UserAbstract {
     abstract createUser(data: CreateUserDto): Promise<User>;
     abstract findUser(id: string): Promise<User>;
+    abstract findByProfile(id: string): Promise<User>;
     abstract listUser(): Promise<User[]>;
     abstract updateUser(id: string, data: UpdateUserDto): Promise<User>;
     abstract removeUser(id: string): Promise<User>;

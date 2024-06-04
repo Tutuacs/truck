@@ -16,6 +16,11 @@ class CreateItemDto {
 }
 exports.CreateItemDto = CreateItemDto;
 __decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEmpty)(),
+    __metadata("design:type", String)
+], CreateItemDto.prototype, "id", void 0);
+__decorate([
     (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
@@ -31,15 +36,23 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.Min)(1),
     __metadata("design:type", Number)
 ], CreateItemDto.prototype, "maxCombo", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], CreateItemDto.prototype, "active", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(36),
     __metadata("design:type", String)
 ], CreateItemDto.prototype, "productId", void 0);
 __decorate([
+    (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(36),
     __metadata("design:type", String)
 ], CreateItemDto.prototype, "comboId", void 0);
 class CreateManyItemsDto {

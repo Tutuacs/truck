@@ -15,6 +15,21 @@ let ItemFunctions = class ItemFunctions extends item_exist_filter_1.ItemVerify {
             data,
         });
     }
+    createManyItem(data) {
+        return this.prisma.item.createManyAndReturn({
+            data: data.items
+        });
+    }
+    updateManyItem(data) {
+        return this.prisma.item.updateMany({
+            where: {
+                id: {
+                    in: data.items.map(item => item.id)
+                },
+            },
+            data: data.items
+        });
+    }
     findItem(id) {
         return this.prisma.item.findUnique({
             where: {

@@ -18,4 +18,5 @@ __exportStar(require("./Param-Id.decorator"), exports);
 __exportStar(require("./Acess.decorator"), exports);
 __exportStar(require("./role.enums"), exports);
 __exportStar(require("./pound.enums"), exports);
+__exportStar(require("./order.enums"), exports);
 //# sourceMappingURL=index.js.map

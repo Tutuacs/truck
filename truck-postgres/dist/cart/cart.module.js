@@ -10,13 +10,23 @@ exports.CartModule = void 0;
 const common_1 = require("@nestjs/common");
 const cart_service_1 = require("./cart.service");
 const cart_controller_1 = require("./cart.controller");
+const prisma_module_1 = require("../prisma/prisma.module");
+const auth_module_1 = require("../auth/auth.module");
+const cart_filter_1 = require("./functions/cart.filter");
+const cart_abstract_1 = require("./functions/cart-abstract");
 let CartModule = class CartModule {
 };
 exports.CartModule = CartModule;
 exports.CartModule = CartModule = __decorate([
     (0, common_1.Module)({
+        imports: [prisma_module_1.PrismaModule, auth_module_1.AuthModule],
         controllers: [cart_controller_1.CartController],
-        providers: [cart_service_1.CartService],
+        providers: [cart_service_1.CartService,
+            {
+                provide: cart_abstract_1.CartAbstract,
+                useClass: cart_filter_1.CartFunctions
+            }
+        ],
     })
 ], CartModule);
 //# sourceMappingURL=cart.module.js.map

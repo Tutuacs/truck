@@ -16,7 +16,7 @@ model Profile {
   password String
   role     Int     @default(1)
   image    String?
-  User     User?   @relation(fields: [userId], references: [id])
+  User     User    @relation(fields: [userId], references: [id])
   userId   String  @unique
 }
 
@@ -25,7 +25,7 @@ model User {
   name          String?
   email         String?
   document      String?
-  profile       Profile?
+  Profile       Profile?
   verifiedEmail Boolean  @default(false)
   Trucks        Truck[]
   Cart          Cart?
@@ -78,9 +78,9 @@ model Product {
 }
 
 model PromotionProduct {
-  id          String     @id @default(uuid())
+  id          String    @id @default(uuid())
   price       Float
-  active      Boolean    @default(false)
+  active      Boolean   @default(false)
   Product     Product   @relation(fields: [productId], references: [id])
   productId   String
   Promotion   Promotion @relation(fields: [promotionId], references: [id])
@@ -108,7 +108,7 @@ model Item {
   price     Float
   active    Boolean @default(true)
   minCombo  Int?    @default(1)
-  maxCombo  Int?    @default(1)
+  maxCombo  Int?
   Product   Product @relation(fields: [productId], references: [id])
   productId String
   Combo     Combo?  @relation(fields: [comboId], references: [id])

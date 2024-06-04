@@ -21,8 +21,8 @@ let OrderItemsController = class OrderItemsController {
     constructor(orderItemsService) {
         this.orderItemsService = orderItemsService;
     }
-    create(data) {
-        return this.orderItemsService.create(data);
+    createMany(data) {
+        return this.orderItemsService.createMany(data);
     }
     findAll() {
         return this.orderItemsService.findAll();
@@ -42,9 +42,9 @@ __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_order_item_dto_1.CreateOrderItemDto]),
+    __metadata("design:paramtypes", [create_order_item_dto_1.ManyOrderItemsDto]),
     __metadata("design:returntype", void 0)
-], OrderItemsController.prototype, "create", null);
+], OrderItemsController.prototype, "createMany", null);
 __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),

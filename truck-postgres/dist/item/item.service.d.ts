@@ -1,4 +1,4 @@
-import { CreateItemDto } from './dto/create-item.dto';
+import { CreateItemDto, CreateManyItemsDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { ItemAbstract } from './functions/item-abstract';
 export declare class ItemService {
@@ -13,6 +13,15 @@ export declare class ItemService {
         productId: string;
         comboId: string;
     }>;
+    createMany(data: CreateManyItemsDto): Promise<{
+        id: string;
+        price: number;
+        active: boolean;
+        minCombo: number;
+        maxCombo: number;
+        productId: string;
+        comboId: string;
+    }[]>;
     findAll(): Promise<{
         id: string;
         price: number;

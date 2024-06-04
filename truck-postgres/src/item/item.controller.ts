@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ItemService } from './item.service';
-import { CreateItemDto } from './dto/create-item.dto';
+import { CreateItemDto, CreateManyItemsDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 
 @Controller('item')
@@ -10,6 +10,11 @@ export class ItemController {
   @Post()
   create(@Body() data: CreateItemDto) {
     return this.itemService.create(data);
+  }
+
+  @Post('many')
+  createMany(@Body() data: CreateManyItemsDto) {
+    return this.itemService.createMany(data);
   }
 
   @Get()

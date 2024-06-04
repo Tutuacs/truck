@@ -1,12 +1,43 @@
 import { CartService } from './cart.service';
-import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
+import { Role } from 'src/decorators';
 export declare class CartController {
     private readonly cartService;
     constructor(cartService: CartService);
-    create(createCartDto: CreateCartDto): string;
-    findAll(): string;
-    findOne(id: string): string;
-    update(id: string, updateCartDto: UpdateCartDto): string;
-    remove(id: string): string;
+    findAll(): Promise<{
+        id: string;
+        userId: string;
+    }[]>;
+    findByProfile(id: string, user: {
+        id: string;
+        role: Role;
+    }): Promise<{
+        id: string;
+        userId: string;
+    }>;
+    findByUser(id: string, user: {
+        id: string;
+        role: Role;
+        userId: string;
+    }): Promise<{
+        id: string;
+        userId: string;
+    }>;
+    connectionsCart(id: string, type: string, action: string, user: {
+        cartId: string;
+    }): Promise<{
+        id: string;
+        userId: string;
+    }>;
+    findOne(id: string, user: {
+        id: string;
+        role: Role;
+    }): Promise<{
+        id: string;
+        userId: string;
+    }>;
+    update(id: string, data: UpdateCartDto): Promise<{
+        id: string;
+        userId: string;
+    }>;
 }
